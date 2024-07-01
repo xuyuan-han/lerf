@@ -38,6 +38,7 @@ from lerf.data.utils.dino_dataloader import DinoDataloader
 from lerf.data.utils.pyramid_embedding_dataloader import PyramidEmbeddingDataloader
 from lerf.encoders.image_encoder import BaseImageEncoder
 from nerfstudio.data.datamanagers.base_datamanager import VanillaDataManager, VanillaDataManagerConfig
+from lerf.data.utils.colmap_dataloader import ColmapDataloader
 
 
 @dataclass
@@ -75,6 +76,10 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         super().__init__(
             config=config, device=device, test_mode=test_mode, world_size=world_size, local_rank=local_rank, **kwargs
         )
+
+        #TODO: check if load_llff_data , Load the data using the utilities
+        #images, poses, bds, render_poses, i_test = load_llff_data(config.dataparser.data_dir)
+
         self.image_encoder: BaseImageEncoder = kwargs["image_encoder"]
         images = [self.train_dataset[i]["image"].permute(2, 0, 1)[None, ...] for i in range(len(self.train_dataset))]
         images = torch.cat(images)
@@ -83,6 +88,16 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         clip_cache_path = Path(osp.join(cache_dir, f"clip_{self.image_encoder.name}"))
         dino_cache_path = Path(osp.join(cache_dir, "dino.npy"))
         # NOTE: cache config is sensitive to list vs. tuple, because it checks for dict equality
+
+
+        # TODO: do we have to explicitly set the data loader for depth load_llff? Put it into utils?
+        # Load depth data
+        #depth_list/depth_gts = DepthDataLoader(depth_list, self.device, cache_path=depth_cache_path) where (load_colmap_depth(config.dataparser.data_dir))
+        # depth_gts = load_colmap_depth(args.datadir, factor=args.factor, bd_factor=.75)
+        print(config.dataparser.data)
+
+        self.colmap_dataloader = ColmapDataloader(device=self.device, directory_path=config.dataparser.data)
+
         self.dino_dataloader = DinoDataloader(
             image_list=images,
             device=self.device,
@@ -114,10 +129,12 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         ray_bundle = self.train_ray_generator(ray_indices)
         batch["clip"], clip_scale = self.clip_interpolator(ray_indices)
         batch["dino"] = self.dino_dataloader(ray_indices)
+        #TODO:  batch["depth"] = self.depth_dataloader(ray_indices)??
         ray_bundle.metadata["clip_scales"] = clip_scale
         # assume all cameras have the same focal length and image width
         ray_bundle.metadata["fx"] = self.train_dataset.cameras[0].fx.item()
         ray_bundle.metadata["width"] = self.train_dataset.cameras[0].width.item()
         ray_bundle.metadata["fy"] = self.train_dataset.cameras[0].fy.item()
         ray_bundle.metadata["height"] = self.train_dataset.cameras[0].height.item()
+        # TODO:  ray bundles for depth
         return ray_bundle, batch

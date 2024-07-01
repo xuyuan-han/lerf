@@ -126,6 +126,8 @@ class LERFModel(NerfactoModel):
         outputs["dino"] = self.renderer_mean(
             embeds=lerf_field_outputs[LERFFieldHeadNames.DINO], weights=lerf_weights.detach()
         )
+        #TODO outputs for depth values
+        # outputs["depth"] = self.renderer_depth(weights=lerf_weights, ray_samples=lerf_samples)
 
         if not self.training:
             with torch.no_grad():
@@ -224,6 +226,8 @@ class LERFModel(NerfactoModel):
             loss_dict["clip_loss"] = unreduced_clip.sum(dim=-1).nanmean()
             unreduced_dino = torch.nn.functional.mse_loss(outputs["dino"], batch["dino"], reduction="none")
             loss_dict["dino_loss"] = unreduced_dino.sum(dim=-1).nanmean()
+            #TODO depth loss
+            # unreduced_depth = torch.nn.functional.mse_loss(outputs["depth"], batch["depth"], reduction="none")
         return loss_dict
 
     def get_param_groups(self) -> Dict[str, List[Parameter]]:
