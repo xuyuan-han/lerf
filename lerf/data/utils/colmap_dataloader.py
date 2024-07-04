@@ -1,13 +1,13 @@
 import typing
-
+import imageio
 import torch
 from lerf.data.utils.dino_extractor import ViTExtractor
 from lerf.data.utils.feature_dataloader import FeatureDataloader
 from tqdm import tqdm
 from nerfstudio.data.utils.colmap_parsing_utils import *
 from nerfstudio.data.dataparsers.colmap_dataparser import *
-
-
+from nerfstudio.process_data.images_to_nerfstudio_dataset import ImagesToNerfstudioDataset
+from nerfstudio.data.utils.colmap_parsing_utils import *
 
 class ColmapDataloader:
 
@@ -16,19 +16,173 @@ class ColmapDataloader:
             device: torch.device,
             directory_path: str = None,
     ):
+        self.device = device
+        # use SfM to get depth maps
+        # sparse_path = Path(directory_path) /"colmap"/ "sparse" / "0"
+        #cmd = ImagesToNerfstudioDataset(
+        #    data=directory_path / "images", output_dir=directory_path / "converted",
+
+        #     skip_colmap=True,colmap_model_path=sparse_path , sfm_tool="colmap", use_sfm_depth=True, skip_image_processing=True,
+        #  )
+
+        #cmd.main()
+        #exctract the data from images
+
+
+
+
+
+
+
+
+
 
         self.cfg = ColmapDataParserConfig(data=Path(directory_path), train_split_fraction=1.0,
-                                          max_2D_matches_per_3D_point=-1)
-        self.device = device
+                                          max_2D_matches_per_3D_point=-1,eval_mode="all")
         self.dataparser = self.cfg.setup()
-        data_parser_outputs = self.dataparser.get_dataparser_outputs(split="train")
-        points3D = data_parser_outputs.metadata["points3D_image_ids"]
-        print(data_parser_outputs.metadata["points3D_points2D_xy"])
-        print(data_parser_outputs.metadata["points3D_points2D_xy"].shape)
-        #print(variable.shape)
+        self.data_parser_outputs = self.dataparser.get_dataparser_outputs(split="train")
+
+        images = read_images_binary(Path(directory_path) / "colmap" / "sparse" / "0" / "images.bin")
+        image_filenames = self.data_parser_outputs.image_filenames
+
+        self.names = {}
+        for i in images:
+            for index, j in enumerate(image_filenames):
+                if images[i].name == j.name:
+                    self.names[images[i].id] = index
+
+        print(self.names)
+
+
+        self.load_colmap_depth(self.data_parser_outputs)
+
+
+        print("Conversion complete.")
 
 
 
+    def load_colmap_depth(self, dataparser_outputs, manual_near_far=None):
+        # Retrieve metadata and camera information
+        cameras = dataparser_outputs.cameras
+        metadata = dataparser_outputs.metadata
+
+        points3D_xyz = metadata['points3D_xyz']
+        points3D_errors = metadata['points3D_error']
+        points3D_image_ids = metadata.get('points3D_image_ids', None)
+        points3D_image_xy = metadata.get('points3D_points2D_xy', None)
+        points3D_points2D_xy = metadata.get('points3D_points2D_xy', None)
+        p = metadata["points3D_num_points2D"]
+        print(p, "points")
+        print(points3D_points2D_xy.shape, " points3D_points2D_xy")
+        print(points3D_errors.shape, " points3D_errors")
+        print(points3D_image_ids)
+        # Calculate mean projection error
+        Err_mean = torch.mean(points3D_errors)
+        print("Mean Projection Error:", Err_mean.item())
+
+        data_list = []
+       # print(cameras.camera_to_worlds.shape)
+        print(cameras.shape, " cameras")
+        print(torch.max(points3D_image_ids))
+        print(points3D_xyz[0:19], " points3D_xyz")
+
+
+
+
+        # Process each camera
+        for i in range(points3D_image_ids.shape[0]):
+            depth_list = []
+            for j in range(points3D_image_ids.shape[1]):
+                if points3D_image_ids[i,j] != -1:
+                    c2w = cameras.camera_to_worlds[self.names[int(points3D_image_ids[i,j])]]
+                    depth = c2w[:3, 2].T @ (points3D_xyz[i, :] - c2w[:3, 3])
+                    if depth > 0:
+                        print(depth)
+
+
+        # Define or calculate near and far planes
+        if manual_near_far:
+            near, far = manual_near_far
+        else:
+            near = torch.quantile(depth_list, 0.01)
+            far = torch.quantile(depth_list, 0.99)
+
+        # Validate depth range
+        valid_mask = (depths >= near) & (depths <= far)
+        valid_depths = depths[valid_mask]
+        valid_errors = points3D_errors[valid_mask]
+        weights = 2 * torch.exp(-torch.pow((valid_errors / Err_mean), 2))
+
+        # Collect valid data
+        if points3D_image_xy is not None:
+            # Adjusted to handle mismatch in dimensions
+            image_xy = points3D_image_xy[i]
+            valid_mask = valid_mask[:image_xy.shape[0]]  # Ensure mask is of correct size
+            valid_coords = image_xy[valid_mask]
+
+        if len(valid_depths) > 0:
+            data_list.append({
+                "depth": valid_depths.numpy(),
+                "coord": valid_coords.numpy() if points3D_image_xy is not None else None,
+                "error": weights.numpy()
+            })
+        else:
+            print(f'Camera {i}: No valid depths found within range.')
+
+        return data_list
+
+
+"""
+def load_colmap_depth(dataparser, factor=8, bd_factor=.75):
+    #data_file = Path(basedir) / 'colmap_depth.npy'
+    #images = read_images_binary(Path(basedir) / 'sparse' / '0' / 'images.bin')
+    #points = read_points3d_binary(Path(basedir) / 'sparse' / '0' / 'points3D.bin')
+    Errs = dataparser.metadata["points3D_error"]
+    Err_mean = np.mean(Errs)
+    #Errs = np.array([point3D.error for point3D in points.values()])
+    #Err_mean = np.mean(Errs)
+    #print("Mean Projection Error:", Err_mean)
+    poses = dataparser.cameras.camera_to_worlds
+    #poses = get_poses(images)
+    _, bds_raw, _ = _load_data(basedir, factor=factor)  # factor=8 downsamples original imgs by 8x
+    bds_raw = np.moveaxis(bds_raw, -1, 0).astype(np.float32)
+    # print(bds_raw.shape)
+    # Rescale if bd_factor is provided
+    sc = 1. if bd_factor is None else 1. / (bds_raw.min() * bd_factor)
+
+    near = np.ndarray.min(bds_raw) * .9 * sc
+    far = np.ndarray.max(bds_raw) * 1. * sc
+    print('near/far:', near, far)
+
+    data_list = []
+    for id_im in range(1, len(images) + 1):
+        depth_list = []
+        coord_list = []
+        weight_list = []
+        for i in range(len(images[id_im].xys)):
+            point2D = images[id_im].xys[i]
+            id_3D = images[id_im].point3D_ids[i]
+            if id_3D == -1:
+                continue
+            point3D = points[id_3D].xyz
+            depth = (poses[id_im - 1, :3, 2].T @ (point3D - poses[id_im - 1, :3, 3])) * sc
+            if depth < bds_raw[id_im - 1, 0] * sc or depth > bds_raw[id_im - 1, 1] * sc:
+                continue
+            err = points[id_3D].error
+            weight = 2 * np.exp(-(err / Err_mean) ** 2)
+            depth_list.append(depth)
+            coord_list.append(point2D / factor)
+            weight_list.append(weight)
+        if len(depth_list) > 0:
+            print(id_im, len(depth_list), np.min(depth_list), np.max(depth_list), np.mean(depth_list))
+            data_list.append(
+                {"depth": np.array(depth_list), "coord": np.array(coord_list), "error": np.array(weight_list)})
+        else:
+            print(id_im, len(depth_list))
+    # json.dump(data_list, open(data_file, "w"))
+    np.save(data_file, data_list)
+    return data_list
+"""
 """
 def load_colmap_data(realdir):
     camerasfile = os.path.join(realdir, 'sparse/0/cameras.bin')

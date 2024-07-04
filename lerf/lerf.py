@@ -14,12 +14,14 @@ from nerfstudio.model_components.renderers import DepthRenderer
 from nerfstudio.models.nerfacto import NerfactoModel, NerfactoModelConfig
 from nerfstudio.utils.colormaps import ColormapOptions, apply_colormap
 from nerfstudio.viewer.viewer_elements import *
+from nerfstudio.model_components.losses import depth_loss
 from torch.nn import Parameter
 
 from lerf.encoders.image_encoder import BaseImageEncoder
 from lerf.lerf_field import LERFField
 from lerf.lerf_fieldheadnames import LERFFieldHeadNames
 from lerf.lerf_renderers import CLIPRenderer, MeanRenderer
+
 
 
 @dataclass
@@ -228,6 +230,7 @@ class LERFModel(NerfactoModel):
             loss_dict["dino_loss"] = unreduced_dino.sum(dim=-1).nanmean()
             #TODO depth loss
             # unreduced_depth = torch.nn.functional.mse_loss(outputs["depth"], batch["depth"], reduction="none")
+            #loss_dict["depth_loss"] = depth_loss()
         return loss_dict
 
     def get_param_groups(self) -> Dict[str, List[Parameter]]:
