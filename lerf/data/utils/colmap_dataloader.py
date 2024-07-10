@@ -7,57 +7,86 @@ from tqdm import tqdm
 from nerfstudio.data.utils.colmap_parsing_utils import *
 from nerfstudio.data.dataparsers.colmap_dataparser import *
 from nerfstudio.process_data.images_to_nerfstudio_dataset import ImagesToNerfstudioDataset
+from nerfstudio.process_data.colmap_utils import *
 from nerfstudio.data.utils.colmap_parsing_utils import *
+from nerfstudio.cameras import camera_utils
 
 class ColmapDataloader:
 
     def __init__(
             self,
+            train_outputs,
+            num_rays_per_batch,
+            image_list,
             device: torch.device,
-            directory_path: str = None,
+            directory_path: str = None, 
     ):
+        
         self.device = device
-        # use SfM to get depth maps
-        # sparse_path = Path(directory_path) /"colmap"/ "sparse" / "0"
-        #cmd = ImagesToNerfstudioDataset(
-        #    data=directory_path / "images", output_dir=directory_path / "converted",
 
-        #     skip_colmap=True,colmap_model_path=sparse_path , sfm_tool="colmap", use_sfm_depth=True, skip_image_processing=True,
-        #  )
+        self.num_rays_per_batch = num_rays_per_batch
 
-        #cmd.main()
-        #exctract the data from images
-
-
-
-
-
-
-
-
-
-
-        self.cfg = ColmapDataParserConfig(data=Path(directory_path), train_split_fraction=1.0,
-                                          max_2D_matches_per_3D_point=-1,eval_mode="all")
-        self.dataparser = self.cfg.setup()
-        self.data_parser_outputs = self.dataparser.get_dataparser_outputs(split="train")
-
+        self.cameras = train_outputs.cameras
+        self.image_list = image_list
+        
+        #map colmap ids to dataparser output ids
         images = read_images_binary(Path(directory_path) / "colmap" / "sparse" / "0" / "images.bin")
-        image_filenames = self.data_parser_outputs.image_filenames
+        image_filenames = train_outputs.image_filenames
 
-        self.names = {}
+        self.colmapId2TrainId = {}
         for i in images:
+            #initialize with -1, so that we can indicate unmatched frames that are not in the training dataset
+            self.colmapId2TrainId[images[i].id] = -1
             for index, j in enumerate(image_filenames):
                 if images[i].name == j.name:
-                    self.names[images[i].id] = index
+                    self.colmapId2TrainId[images[i].id] = index
+                    break
+        
+        #colmap_to_json(recon_dir=(Path(directory_path) / "colmap" / "sparse" / "0"),output_dir=Path(directory_path) / "test") #still discrepancy between own generated json transforms and supplied ones from nerfstudio
 
-        print(self.names)
-
-
-        self.load_colmap_depth(self.data_parser_outputs)
-
-
+        #prepare colmap data
+        self.ray_indices,self.depths,self.weights = self.load_colmap_depth(train_outputs)
         print("Conversion complete.")
+
+        #TODO: Look at how to cache these results
+
+
+        """
+        def get_rays_by_coord_np(cx, cy, fx, fy, c2w, coords):
+            i, j = (coords[:,0]-cx)/fx, -(coords[:,1]-cy)/fy
+            dirs = np.stack([i,j,-np.ones_like(i)],-1)
+            rays_d = np.sum(dirs[..., np.newaxis, :] * c2w[:3,:3], -1)
+            rays_d, norm = camera_utils.normalize_with_norm(torch.tensor(rays_d), -1)
+            rays_d = np.array(rays_d)
+            rays_o = np.broadcast_to(c2w[:3,-1], np.shape(rays_d))
+            return rays_o, rays_d
+
+        rays_depth_list = []
+        for i, pose in enumerate(train_outputs.cameras.camera_to_worlds):
+            rays_depth = np.stack(get_rays_by_coord_np(train_outputs.cameras.cx[i].item(), train_outputs.cameras.cy[i].item(),train_outputs.cameras.fx[i].item(),train_outputs.cameras.fy[i].item(), np.array(pose), np.stack(data_list[i]['coord'],axis=0)), axis=0) # 2 x N x 3
+            rays_depth = np.transpose(rays_depth, [1,0,2]) # N x 2 x 3
+            depth_value = np.repeat(np.stack(data_list[i]['depth'],axis=0)[:,None], 3, axis=2) # N x 1 x 3
+            weights = np.repeat(np.stack(data_list[i]['error'],axis=0)[:,None,None], 3, axis=2) # N x 1 x 3
+            rays_depth = np.concatenate([rays_depth, depth_value, weights], axis=1) # N x 4 x 3
+            rays_depth_list.append(rays_depth)
+
+            if i == 1:
+                #swap x and y, since generate_rays() assumes coord[:,0] is y and coord[:,1] is x
+                coords = np.stack(data_list[i]['coord'],axis=0)
+                coords[:,[0,1]] = coords[:,[1,0]]
+                
+        self.rays_depth = np.concatenate(rays_depth_list, axis=0)
+        print('rays_weights mean:', np.mean(rays_depth[:,3,0]))
+        print('rays_weights std:', np.std(rays_depth[:,3,0]))
+        print('rays_weights max:', np.max(rays_depth[:,3,0]))
+        print('rays_weights min:', np.min(rays_depth[:,3,0]))
+        print('rays_depth.shape:', rays_depth.shape)
+        self.rays_depth = rays_depth.astype(np.float32)
+        print('shuffle depth rays')
+        np.random.shuffle(self.rays_depth)
+
+        self.max_depth = np.max(self.rays_depth[:,3,0])
+        """
 
 
 
@@ -70,36 +99,74 @@ class ColmapDataloader:
         points3D_errors = metadata['points3D_error']
         points3D_image_ids = metadata.get('points3D_image_ids', None)
         points3D_image_xy = metadata.get('points3D_points2D_xy', None)
-        points3D_points2D_xy = metadata.get('points3D_points2D_xy', None)
-        p = metadata["points3D_num_points2D"]
-        print(p, "points")
-        print(points3D_points2D_xy.shape, " points3D_points2D_xy")
-        print(points3D_errors.shape, " points3D_errors")
-        print(points3D_image_ids)
+        #p = metadata["points3D_num_points2D"]
+
         # Calculate mean projection error
         Err_mean = torch.mean(points3D_errors)
         print("Mean Projection Error:", Err_mean.item())
 
-        data_list = []
-       # print(cameras.camera_to_worlds.shape)
-        print(cameras.shape, " cameras")
-        print(torch.max(points3D_image_ids))
-        print(points3D_xyz[0:19], " points3D_xyz")
+        #TODO: check how to compute bounds. In DS-Nerf they precompute percentiles for min and max depths for each posed image (close_depth, inf_depth = np.percentile(zs, .5), np.percentile(zs, 99.5)). This is then used in the following to filter points. Also they employ some scaling factor bd_factor (usually set to 0.75).
 
 
+        #preprocess data to be in shape (samples, 3) where 3 is cameraindex and coords in y, x order. Additionally keep one array for depth and weight values of shape (samples, 1)
+        ray_indices = []
+        weights = []
+        depths =[]
+        sorted_out = 0
+        for i in range(points3D_image_ids.shape[0]):
+            for j in range(points3D_image_ids.shape[1]):
 
+                if points3D_image_ids[i,j] != -1 and self.colmapId2TrainId[int(points3D_image_ids[i,j])] != -1:
+                    mapped_id = self.colmapId2TrainId[int(points3D_image_ids[i,j])]
+                    point2D = points3D_image_xy[i,j]
 
+                    #sanity check that point coordinates are within width and height bounds
+                    if point2D[0] < cameras.width[mapped_id].item() and point2D[0] >= 0. and point2D[1] < cameras.height[mapped_id].item() and point2D[1] >= 0.:
+                        #compute depth in camera frame
+                        c2w = cameras.camera_to_worlds[mapped_id]
+                        depth = c2w[:3, 2].unsqueeze(0) @ (points3D_xyz[i, :] - c2w[:3, 3])
+
+                        err = points3D_errors[i]
+                        weight = 2 * np.exp(-(err/Err_mean)**2)
+
+                        #swap x and y since render_rays() expects tensor([y,x])
+                        ray_indices.append(torch.tensor([mapped_id,point2D[1],point2D[0]]))
+                        depths.append(depth)
+                        weights.append(weight)
+                    else:
+                        sorted_out +=1
+
+        depths = torch.tensor(depths)
+        weights = torch.tensor(weights)
+        ray_indices = torch.stack(ray_indices,dim=0)
+
+        return ray_indices,depths,weights
+
+        """
+        data_list = {}
         # Process each camera
         for i in range(points3D_image_ids.shape[0]):
-            depth_list = []
             for j in range(points3D_image_ids.shape[1]):
-                if points3D_image_ids[i,j] != -1:
-                    c2w = cameras.camera_to_worlds[self.names[int(points3D_image_ids[i,j])]]
-                    depth = c2w[:3, 2].T @ (points3D_xyz[i, :] - c2w[:3, 3])
-                    if depth > 0:
-                        print(depth)
+                if points3D_image_ids[i,j] != -1 and self.colmapId2TrainId[int(points3D_image_ids[i,j])] != -1:
+                    
+                    mapped_id = self.colmapId2TrainId[int(points3D_image_ids[i,j])]
+                    point2D = points3D_image_xy[i,j]
 
+                    #compute depth in camera frame
+                    c2w = cameras.camera_to_worlds[mapped_id]
+                    depth = c2w[:3, 2].unsqueeze(0) @ (points3D_xyz[i, :] - c2w[:3, 3])
 
+                    err = points3D_errors[i]
+                    weight = 2 * np.exp(-(err/Err_mean)**2)
+
+                    if mapped_id in data_list.keys():
+                        data_list[mapped_id]["depth"].append(np.array(depth))
+                        data_list[mapped_id]["coord"].append(np.array(point2D))
+                        data_list[mapped_id]["error"].append(weight)
+                    else:
+                        data_list[mapped_id] = {"depth":[np.array(depth)], "coord":[np.array(point2D)], "error":[weight]}
+
+        
         # Define or calculate near and far planes
         if manual_near_far:
             near, far = manual_near_far
@@ -129,8 +196,45 @@ class ColmapDataloader:
         else:
             print(f'Camera {i}: No valid depths found within range.')
 
-        return data_list
+        """
 
+
+    def __call__(self):
+
+        #generate n samples between 0 and ray_indices.shape[0]. DS-Nerf assumes half of all rays per iteration to be depth rays by default.
+        indices = torch.randperm(self.ray_indices.shape[0])[:self.num_rays_per_batch]
+        
+        #index in datastructures
+        selected_ray_indices = self.ray_indices[indices]
+        selected_weights = self.weights[indices]
+        selected_depths = self.depths[indices]
+        
+        #TODO: How to cope with colmap rays that do not directly align with pixel grid?
+        #      For generating clip and dino gt we currently require rays aligned to the pixel grid.
+        #      Nerfstudio assumes integer coordinates between 0 and width-1/height-1 in ray indices array. These get then mapped to image coordinates by applying +0.5
+        #      Two options: 1.Adapt dino and clip loaders to interpolate ray values between grids.
+        #                   2.Generate ray bundle from floored rays and assume generated depth values to be for one whole pixel
+        #      For now use option two...
+
+        #convert image coordinates in ray_indices tensor to integer coordinates
+        selected_ray_indices[:,1:] = torch.floor(selected_ray_indices[:,1:])
+        selected_ray_indices = selected_ray_indices.type(torch.IntTensor)
+
+        #compute gt rgb values
+        c, y, x = (i.flatten() for i in torch.split(selected_ray_indices, 1, dim=-1))
+        c, y, x = c.cpu(), y.cpu(), x.cpu()
+        gt_rgb = self.image_list[c, y, x]
+
+
+        """
+        #prepare rays
+        c = selected_ray_indices[:, 0].type(torch.IntTensor)  # camera indices
+        coords = selected_ray_indices[:, 1:] + 0.5  # coords in row indices, col indices (y,x)
+        ray_bundle = self.cameras.generate_rays(camera_indices=c.unsqueeze(-1),coords=coords)
+        """
+
+        #return ray bundle and depth and weights. Also return ray indices
+        return selected_ray_indices,gt_rgb,selected_depths,selected_weights
 
 """
 def load_colmap_depth(dataparser, factor=8, bd_factor=.75):
@@ -388,11 +492,3 @@ def get_poses_bounds( poses, pts3d, perm):
     #np.save(os.path.join(basedir, 'poses_bounds.npy'), save_arr)
     return save_arr
 """
-def __call__(self, img_points):
-    # img_points: (B, 3) # (img_ind, x, y)
-    img_scale = (
-        self.data.shape[1] / self.cfg["image_shape"][0],
-        self.data.shape[2] / self.cfg["image_shape"][1],
-    )
-    x_ind, y_ind = (img_points[:, 1] * img_scale[0]).long(), (img_points[:, 2] * img_scale[1]).long()
-    return (self.data[img_points[:, 0].long(), x_ind, y_ind]).to(self.device)

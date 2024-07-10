@@ -128,9 +128,20 @@ class LERFModel(NerfactoModel):
         outputs["dino"] = self.renderer_mean(
             embeds=lerf_field_outputs[LERFFieldHeadNames.DINO], weights=lerf_weights.detach()
         )
+        """
         #TODO outputs for depth values
         # outputs["depth"] = self.renderer_depth(weights=lerf_weights, ray_samples=lerf_samples)
 
+        depth_start_index = ray_bundle.origins.shape[0] - ray_bundle.metadata["num_depth_rays"]
+        print(depth_start_index)
+        
+        #remove all results for colmap rays other than depth
+        if not ray_bundle.metadata["compute_other_losses_for_depth_rays"]:
+            outputs2 = {key : value[:depth_start_index,...] for key,value in outputs.items}
+            assert(outputs.keys() == outputs2.keys())
+            print(outputs2["rgb"].shape)
+            print(outputs["rgb"].shape)
+        """
         if not self.training:
             with torch.no_grad():
                 max_across, best_scales = self.get_max_across(
