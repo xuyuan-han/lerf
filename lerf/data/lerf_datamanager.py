@@ -76,10 +76,18 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         local_rank: int = 0,
         **kwargs,  # pylint: disable=unused-argument
     ):
-        
+
         #calculate number of depth rays to sample based on input training rays and adapt config for datamanager accordingly
         self.num_depth_rays_per_batch = int(config.percent_depth_rays * config.train_num_rays_per_batch)
         config.train_num_rays_per_batch = config.train_num_rays_per_batch - self.num_depth_rays_per_batch
+        #if (config.dataparser.data "cameras.txt").exists():
+        if (config.dataparser.data / "colmap" / "sparse" / "0").exists():
+           print("Exists")
+        else:
+            config.dataparser.colmap_path = Path(config.dataparser.data / "dslr"/ "colmap")
+            config.dataparser.images_path = Path(config.dataparser.data / "dslr" / "resized_images")
+            print("Does not exist")
+
 
         super().__init__(
             config=config, device=device, test_mode=test_mode, world_size=world_size, local_rank=local_rank, **kwargs
@@ -102,7 +110,7 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         # Load depth data
         #depth_list/depth_gts = DepthDataLoader(depth_list, self.device, cache_path=depth_cache_path) where (load_colmap_depth(config.dataparser.data_dir))
         # depth_gts = load_colmap_depth(args.datadir, factor=args.factor, bd_factor=.75)
-        self.colmap_dataloader = ColmapDataloader(image_list=images.permute(0,2,3,1),num_rays_per_batch=self.num_depth_rays_per_batch,train_outputs=self.train_dataparser_outputs, device=self.device, directory_path=config.dataparser.data)
+        self.colmap_dataloader = ColmapDataloader(image_list=images.permute(0,2,3,1),num_rays_per_batch=self.num_depth_rays_per_batch,train_outputs=self.train_dataparser_outputs, device=self.device, directory_path=config.dataparser.data / config.dataparser.colmap_path)
         self.dino_dataloader = DinoDataloader(
             image_list=images,
             device=self.device,
@@ -157,7 +165,7 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         #append config option related to computing losses for depth rays to metadata
         ray_bundle.metadata["compute_other_losses_for_depth_rays"] = self.config.compute_other_losses_for_depth_rays
         ray_bundle.metadata["num_depth_rays"] = self.num_depth_rays_per_batch
-        
+
         ray_bundle.metadata["clip_scales"] = clip_scale
         # assume all cameras have the same focal length and image width
         ray_bundle.metadata["fx"] = self.train_dataset.cameras[0].fx.item()

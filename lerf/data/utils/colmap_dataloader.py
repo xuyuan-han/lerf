@@ -11,6 +11,8 @@ from nerfstudio.process_data.colmap_utils import *
 from nerfstudio.data.utils.colmap_parsing_utils import *
 from nerfstudio.cameras import camera_utils
 
+from nerfstudio.data.dataparsers.scannetpp_dataparser import *
+
 class ColmapDataloader:
 
     def __init__(
@@ -30,7 +32,11 @@ class ColmapDataloader:
         self.image_list = image_list
         
         #map colmap ids to dataparser output ids
-        images = read_images_binary(Path(directory_path) / "colmap" / "sparse" / "0" / "images.bin")
+        if (directory_path / "images.txt").exists():
+            images = read_images_text(directory_path / "images.txt")
+        else:
+            images = read_images_binary( directory_path / "images.bin")
+
         image_filenames = train_outputs.image_filenames
 
         self.colmapId2TrainId = {}
