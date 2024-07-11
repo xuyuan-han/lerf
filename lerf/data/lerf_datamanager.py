@@ -80,14 +80,11 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         #calculate number of depth rays to sample based on input training rays and adapt config for datamanager accordingly
         self.num_depth_rays_per_batch = int(config.percent_depth_rays * config.train_num_rays_per_batch)
         config.train_num_rays_per_batch = config.train_num_rays_per_batch - self.num_depth_rays_per_batch
-        #if (config.dataparser.data "cameras.txt").exists():
-        if (config.dataparser.data / "colmap" / "sparse" / "0").exists():
-           print("Exists")
-        else:
-            config.dataparser.colmap_path = Path(config.dataparser.data / "dslr"/ "colmap")
-            config.dataparser.images_path = Path(config.dataparser.data / "dslr" / "resized_images")
-            print("Does not exist")
 
+        #adapt folders if using scannetpp
+        if not (config.data / "colmap" / "sparse" / "0").exists():
+            config.dataparser.colmap_path = Path("dslr/colmap")
+            config.dataparser.images_path = Path("dslr/resized_images")
 
         super().__init__(
             config=config, device=device, test_mode=test_mode, world_size=world_size, local_rank=local_rank, **kwargs
