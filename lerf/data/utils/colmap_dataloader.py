@@ -17,49 +17,42 @@ class ColmapDataloader:
 
     def __init__(
             self,
-            train_outputs,
-            num_rays_per_batch,
-            image_list,
+            cfg: dict,
             device: torch.device,
-            directory_path: str = None, 
+            image_list: torch.tensor,
+            train_outputs: DataparserOutputs,
+            cache_path: Path
     ):
         
+        self.cfg = cfg
         self.device = device
+        self.cache_path = cache_path
+        self.data = None
+        self.try_load(image_list,train_outputs) # don't save image_list, avoid duplicates
 
-        self.num_rays_per_batch = num_rays_per_batch
-
-        self.cameras = train_outputs.cameras
-        self.image_list = image_list
-        
-        #map colmap ids to dataparser output ids
-        if (directory_path / "images.txt").exists():
-            images = read_images_text(directory_path / "images.txt")
-        else:
-            images = read_images_binary( directory_path / "images.bin")
-
-        image_filenames = train_outputs.image_filenames
-
-        self.colmapId2TrainId = {}
-        for i in images:
-            #initialize with -1, so that we can indicate unmatched frames that are not in the training dataset
-            self.colmapId2TrainId[images[i].id] = -1
-            for index, j in enumerate(image_filenames):
-                if images[i].name == j.name:
-                    self.colmapId2TrainId[images[i].id] = index
-                    break
+    def create(self, image_list, dataparser_outputs, manual_near_far=None):
         
         #colmap_to_json(recon_dir=(Path(directory_path) / "colmap" / "sparse" / "0"),output_dir=Path(directory_path) / "test") #still discrepancy between own generated json transforms and supplied ones from nerfstudio
 
-        #prepare colmap data
-        self.ray_indices,self.depths,self.weights = self.load_colmap_depth(train_outputs)
-        print("Conversion complete.")
+        #map colmap ids to dataparser output ids
+        if (Path(self.cfg["dir_path"]) / "images.txt").exists():
+            images = read_images_text(Path(self.cfg["dir_path"]) / "images.txt")
+        else:
+            images = read_images_binary(Path(self.cfg["dir_path"]) / "images.bin")
 
-        #TODO: Look at how to cache these results
+        image_filenames = dataparser_outputs.image_filenames
+
+        colmapId2TrainId = {}
+        for i in images:
+            #initialize with -1, so that we can indicate unmatched frames that are not in the training dataset
+            colmapId2TrainId[images[i].id] = -1
+            for index, j in enumerate(image_filenames):
+                if images[i].name == j.name:
+                    colmapId2TrainId[images[i].id] = index
+                    break
 
 
-
-    def load_colmap_depth(self, dataparser_outputs, manual_near_far=None):
-        # Retrieve metadata and camera information
+         # Retrieve metadata and camera information
         cameras = dataparser_outputs.cameras
         metadata = dataparser_outputs.metadata
 
@@ -75,7 +68,6 @@ class ColmapDataloader:
 
         #TODO: check how to compute bounds. In DS-Nerf they precompute percentiles for min and max depths for each posed image (close_depth, inf_depth = np.percentile(zs, .5), np.percentile(zs, 99.5)). This is then used in the following to filter points. Also they employ some scaling factor bd_factor (usually set to 0.75).
 
-
         #preprocess data to be in shape (samples, 3) where 3 is cameraindex and coords in y, x order. Additionally keep one array for depth and weight values of shape (samples, 1)
         ray_indices = []
         weights = []
@@ -84,8 +76,8 @@ class ColmapDataloader:
         for i in range(points3D_image_ids.shape[0]):
             for j in range(points3D_image_ids.shape[1]):
 
-                if points3D_image_ids[i,j] != -1 and self.colmapId2TrainId[int(points3D_image_ids[i,j])] != -1:
-                    mapped_id = self.colmapId2TrainId[int(points3D_image_ids[i,j])]
+                if points3D_image_ids[i,j] != -1 and colmapId2TrainId[int(points3D_image_ids[i,j])] != -1:
+                    mapped_id = colmapId2TrainId[int(points3D_image_ids[i,j])]
                     point2D = points3D_image_xy[i,j]
 
                     #sanity check that point coordinates are within width and height bounds
@@ -108,19 +100,6 @@ class ColmapDataloader:
         weights = torch.tensor(weights)
         ray_indices = torch.stack(ray_indices,dim=0)
 
-        return ray_indices,depths,weights
-
-
-    def __call__(self):
-
-        #generate n samples between 0 and ray_indices.shape[0]. DS-Nerf assumes half of all rays per iteration to be depth rays by default.
-        indices = torch.randperm(self.ray_indices.shape[0])[:self.num_rays_per_batch]
-        
-        #index in datastructures
-        selected_ray_indices = self.ray_indices[indices]
-        selected_weights = self.weights[indices]
-        selected_depths = self.depths[indices]
-        
         #TODO: How to cope with colmap rays that do not directly align with pixel grid?
         #      For generating clip and dino gt we currently require rays aligned to the pixel grid.
         #      Nerfstudio assumes integer coordinates between 0 and width-1/height-1 in ray indices array. These get then mapped to image coordinates by applying +0.5
@@ -129,13 +108,51 @@ class ColmapDataloader:
         #      For now use option two...
 
         #convert image coordinates in ray_indices tensor to integer coordinates
-        selected_ray_indices[:,1:] = torch.floor(selected_ray_indices[:,1:])
-        selected_ray_indices = selected_ray_indices.type(torch.IntTensor)
+        ray_indices[:,1:] = torch.floor(ray_indices[:,1:])
 
         #compute gt rgb values
-        c, y, x = (i.flatten() for i in torch.split(selected_ray_indices, 1, dim=-1))
-        c, y, x = c.cpu(), y.cpu(), x.cpu()
-        gt_rgb = self.image_list[c, y, x]
+        c, y, x = (i.flatten() for i in torch.split(ray_indices, 1, dim=-1))
+        c, y, x = c.cpu().type(torch.IntTensor), y.cpu().type(torch.IntTensor), x.cpu().type(torch.IntTensor)
+        rgbs = image_list[c, y, x]
+
+        self.data = torch.cat((ray_indices,rgbs,depths.unsqueeze(1),weights.unsqueeze(1)),dim=1)
+        print(self.data.shape)
+
+    def __call__(self):
+        #generate n samples between 0 and ray_indices.shape[0]. DS-Nerf assumes half of all rays per iteration to be depth rays by default.
+        indices = torch.randperm(self.data.shape[0])[:self.cfg["num_rays"]]
+        
+        #index in datastructures
+        selected_data = self.data[indices].to(self.device)
+
+        selected_ray_indices = selected_data[:,:3].type(torch.IntTensor)
+        selected_rgbs = selected_data[:,3:6]
+        selected_depths = selected_data[:,6]
+        selected_weights = selected_data[:,7]
 
         #return ray bundle and depth and weights. Also return ray indices
-        return selected_ray_indices,gt_rgb,selected_depths,selected_weights
+        return selected_ray_indices,selected_rgbs,selected_depths,selected_weights
+
+    def load(self):
+        cache_info_path = self.cache_path.with_suffix(".info")
+        if not cache_info_path.exists():
+            raise FileNotFoundError
+        with open(cache_info_path, "r") as f:
+            cfg = json.loads(f.read())
+        if cfg != self.cfg:
+            raise ValueError("Config mismatch")
+        self.data = torch.from_numpy(np.load(self.cache_path)).to(self.device)
+
+    def save(self):
+        os.makedirs(self.cache_path.parent, exist_ok=True)
+        cache_info_path = self.cache_path.with_suffix(".info")
+        with open(cache_info_path, "w") as f:
+            f.write(json.dumps(self.cfg))
+        np.save(self.cache_path, self.data)
+
+    def try_load(self,image_list, dataparser_outputs):
+        try:
+            self.load()
+        except (FileNotFoundError, ValueError):
+            self.create(image_list,dataparser_outputs)
+            self.save()

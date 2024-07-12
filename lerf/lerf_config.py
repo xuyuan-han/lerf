@@ -6,6 +6,7 @@ from nerfstudio.cameras.camera_optimizers import CameraOptimizerConfig
 from nerfstudio.configs.base_config import ViewerConfig
 from nerfstudio.data.dataparsers.nerfstudio_dataparser import NerfstudioDataParserConfig
 from nerfstudio.data.dataparsers.colmap_dataparser import ColmapDataParserConfig
+from nerfstudio.data.dataparsers.scannetpp_dataparser import ScanNetppDataParserConfig
 from nerfstudio.engine.optimizers import AdamOptimizerConfig, RAdamOptimizerConfig
 from nerfstudio.engine.schedulers import ExponentialDecaySchedulerConfig
 from nerfstudio.engine.trainer import TrainerConfig
@@ -33,6 +34,7 @@ lerf_method = MethodSpecification(
                 dataparser=NerfstudioDataParserConfig(train_split_fraction=0.99),
                 train_num_rays_per_batch=4096,
                 eval_num_rays_per_batch=4096,
+                generate_depth_rays = False,
             ),
             model=LERFModelConfig(
                 eval_num_rays_per_chunk=1 << 15,
@@ -87,6 +89,7 @@ lerf_method_big = MethodSpecification(
                 dataparser=NerfstudioDataParserConfig(train_split_fraction=0.99),
                 train_num_rays_per_batch=4096,
                 eval_num_rays_per_batch=4096,
+                generate_depth_rays = False,
             ),
             model=LERFModelConfig(
                 eval_num_rays_per_chunk=1 << 15,
@@ -135,9 +138,10 @@ lerf_method_lite = MethodSpecification(
         mixed_precision=True,
         pipeline=LERFPipelineConfig(
             datamanager=LERFDataManagerConfig(
-                dataparser=NerfstudioDataParserConfig(train_split_fraction=0.99),
+                dataparser=NerfstudioDataParserConfig(train_split_fraction=0.99), #ScanNetppDataParserConfig(), TODO: Write own scannetpp dataparser that supports downsampling and setting train_split_fraction
                 train_num_rays_per_batch=4096,
                 eval_num_rays_per_batch=4096,
+                generate_depth_rays = False,
             ),
             model=LERFModelConfig(
                 eval_num_rays_per_chunk=1 << 15,
@@ -189,6 +193,7 @@ lerf_method_depth = MethodSpecification(
                 dataparser=ColmapDataParserConfig(train_split_fraction=0.99,max_2D_matches_per_3D_point=-1,eval_mode="fraction"),
                 train_num_rays_per_batch=4096,
                 eval_num_rays_per_batch=4096,
+                #generate_depth_rays = False,
                 #compute_other_losses_for_depth_rays=True, #TODO: currently generated radiance field gets negatively impacted when computing other losses for colmap rays. Semantic predictions seem unaffected.
             ),
             model=LERFModelConfig(

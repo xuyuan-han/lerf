@@ -50,6 +50,7 @@ class LERFDataManagerConfig(VanillaDataManagerConfig):
     patch_stride_scaler: float = 0.5
     percent_depth_rays: float = 0.5
     compute_other_losses_for_depth_rays: bool = False
+    generate_depth_rays: bool = True
 
 
 class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
@@ -78,13 +79,14 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
     ):
 
         #calculate number of depth rays to sample based on input training rays and adapt config for datamanager accordingly
-        self.num_depth_rays_per_batch = int(config.percent_depth_rays * config.train_num_rays_per_batch)
-        config.train_num_rays_per_batch = config.train_num_rays_per_batch - self.num_depth_rays_per_batch
+        if config.generate_depth_rays:
+            self.num_depth_rays_per_batch = int(config.percent_depth_rays * config.train_num_rays_per_batch)
+            config.train_num_rays_per_batch = config.train_num_rays_per_batch - self.num_depth_rays_per_batch
 
-        #adapt folders if using scannetpp
-        if not (config.data / "colmap" / "sparse" / "0").exists():
-            config.dataparser.colmap_path = Path("dslr/colmap")
-            config.dataparser.images_path = Path("dslr/resized_images")
+            #adapt folders if using scannetpp
+            if not (config.data / "colmap" / "sparse" / "0").exists():
+                config.dataparser.colmap_path = Path("dslr/colmap")
+                config.dataparser.images_path = Path("dslr/resized_images")
 
         super().__init__(
             config=config, device=device, test_mode=test_mode, world_size=world_size, local_rank=local_rank, **kwargs
@@ -107,7 +109,21 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         # Load depth data
         #depth_list/depth_gts = DepthDataLoader(depth_list, self.device, cache_path=depth_cache_path) where (load_colmap_depth(config.dataparser.data_dir))
         # depth_gts = load_colmap_depth(args.datadir, factor=args.factor, bd_factor=.75)
-        self.colmap_dataloader = ColmapDataloader(image_list=images.permute(0,2,3,1),num_rays_per_batch=self.num_depth_rays_per_batch,train_outputs=self.train_dataparser_outputs, device=self.device, directory_path=config.dataparser.data / config.dataparser.colmap_path)
+        if config.generate_depth_rays:
+            colmap_cache_path = Path(osp.join(cache_dir, "depth.npy"))
+
+            self.colmap_dataloader = ColmapDataloader(
+                image_list=images.permute(0,2,3,1),
+                device=self.device,
+                cfg={
+                    "num_rays":self.num_depth_rays_per_batch,
+                    "dir_path": str(config.dataparser.data / config.dataparser.colmap_path),
+                    "image_shape": list(images.shape[2:4]),
+                },
+                train_outputs=self.train_dataparser_outputs,
+                cache_path=colmap_cache_path,
+            )
+
         self.dino_dataloader = DinoDataloader(
             image_list=images,
             device=self.device,
@@ -137,32 +153,36 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         batch = self.train_pixel_sampler.sample(image_batch)
         ray_indices = batch["indices"]
 
-        #sample colmap rays
-        colmap_ray_indices,colmap_rgb,colmap_depths,colmap_weights = self.colmap_dataloader()
+        if self.config.generate_depth_rays:
+            #sample colmap rays
+            colmap_ray_indices,colmap_rgb,colmap_depths,colmap_weights = self.colmap_dataloader()
 
-        #Append ray indices of colmap rays to ray_indices.
-        ray_indices_sum = torch.cat((ray_indices,colmap_ray_indices),dim=0)
-        ray_bundle = self.train_ray_generator(ray_indices_sum)
+            #Append ray indices of colmap rays to ray_indices.
+            ray_indices_sum = torch.cat((ray_indices,colmap_ray_indices),dim=0)
+            ray_bundle = self.train_ray_generator(ray_indices_sum)
+
+            #Add weights and depths, as well as indicator how many colmap rays we have to batch.
+            batch["depths"] = colmap_depths
+            batch["weights"] = colmap_weights
+            #append config option related to computing losses for depth rays to metadata
+            ray_bundle.metadata["compute_other_losses_for_depth_rays"] = self.config.compute_other_losses_for_depth_rays
+            ray_bundle.metadata["num_depth_rays"] = self.num_depth_rays_per_batch
+        else:
+            ray_bundle = self.train_ray_generator(ray_indices)
 
         #TODO current problem: if we filter here based on compute_other_losses, clip scales will only be defined for ray_indices sampled by pixel sampler and this will lead to issues in getOutputs() function.
         #                       Could avoid this by filtering out outputs for depth rays in getOutputs function. Or alternatively we could just compute everything for depth rays and filter in getLossdict() prior to loss computation
 
-        if self.config.compute_other_losses_for_depth_rays:
+        if self.config.generate_depth_rays and self.config.compute_other_losses_for_depth_rays:
             #append color of colmap rays to gt colors
-            batch["image"] = torch.cat((batch["image"],colmap_rgb),dim=0)
+            batch["image"] = torch.cat((batch["image"],colmap_rgb.to(batch["image"])),dim=0)
             batch["clip"], clip_scale = self.clip_interpolator(ray_indices_sum)
             batch["dino"] = self.dino_dataloader(ray_indices_sum)
         else:
             batch["clip"], clip_scale = self.clip_interpolator(ray_indices)
             batch["dino"] = self.dino_dataloader(ray_indices)
 
-        #Add weights and depths, as well as indicator how many colmap rays we have to batch.
-        batch["depths"] = colmap_depths
-        batch["weights"] = colmap_weights
-        #append config option related to computing losses for depth rays to metadata
-        ray_bundle.metadata["compute_other_losses_for_depth_rays"] = self.config.compute_other_losses_for_depth_rays
-        ray_bundle.metadata["num_depth_rays"] = self.num_depth_rays_per_batch
-
+        ray_bundle.metadata["generate_depth_rays"] = self.config.generate_depth_rays
         ray_bundle.metadata["clip_scales"] = clip_scale
         # assume all cameras have the same focal length and image width
         ray_bundle.metadata["fx"] = self.train_dataset.cameras[0].fx.item()
