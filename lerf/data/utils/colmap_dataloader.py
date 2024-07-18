@@ -52,7 +52,7 @@ class ColmapDataloader:
                     break
 
 
-         # Retrieve metadata and camera information
+        # Retrieve metadata and camera information
         cameras = dataparser_outputs.cameras
         metadata = dataparser_outputs.metadata
 
@@ -66,25 +66,25 @@ class ColmapDataloader:
         Err_mean = torch.mean(points3D_errors)
         print("Mean Projection Error:", Err_mean.item())
 
-        #TODO: check how to compute bounds. In DS-Nerf they precompute percentiles for min and max depths for each posed image (close_depth, inf_depth = np.percentile(zs, .5), np.percentile(zs, 99.5)). This is then used in the following to filter points. Also they employ some scaling factor bd_factor (usually set to 0.75).
-
         #preprocess data to be in shape (samples, 3) where 3 is cameraindex and coords in y, x order. Additionally keep one array for depth and weight values of shape (samples, 1)
         ray_indices = []
         weights = []
         depths =[]
-        sorted_out = 0
         for i in range(points3D_image_ids.shape[0]):
             for j in range(points3D_image_ids.shape[1]):
 
                 if points3D_image_ids[i,j] != -1 and colmapId2TrainId[int(points3D_image_ids[i,j])] != -1:
                     mapped_id = colmapId2TrainId[int(points3D_image_ids[i,j])]
                     point2D = points3D_image_xy[i,j]
+                    #convert height to nerfstudio indexing
+                    #point2D[1]= cameras.height[mapped_id].item() - point2D[1]
 
                     #sanity check that point coordinates are within width and height bounds
                     if point2D[0] < cameras.width[mapped_id].item() and point2D[0] >= 0. and point2D[1] < cameras.height[mapped_id].item() and point2D[1] >= 0.:
-                        #compute depth in camera frame
+                        #compute depth in camera frame (we need positive depth for optimizing network)
                         c2w = cameras.camera_to_worlds[mapped_id]
                         depth = c2w[:3, 2].unsqueeze(0) @ (points3D_xyz[i, :] - c2w[:3, 3])
+                        depth = -depth #depth loss expects positive depths
 
                         err = points3D_errors[i]
                         weight = 2 * np.exp(-(err/Err_mean)**2)
@@ -93,12 +93,25 @@ class ColmapDataloader:
                         ray_indices.append(torch.tensor([mapped_id,point2D[1],point2D[0]]))
                         depths.append(depth)
                         weights.append(weight)
-                    else:
-                        sorted_out +=1
 
         depths = torch.tensor(depths)
         weights = torch.tensor(weights)
         ray_indices = torch.stack(ray_indices,dim=0)
+
+        #TODO: check how to compute bounds. In DS-Nerf they precompute percentiles for min and max depths for each posed image (close_depth, inf_depth = np.percentile(zs, .5), np.percentile(zs, 99.5)). This is then used in the following to filter points. Also they employ some scaling factor bd_factor (usually set to 0.75).
+        """
+        for i in range(len(image_filenames)):
+            rays_for_cam = (ray_indices[:,0] == i)
+            depths_for_cam = depths[rays_for_cam]
+            close_depth, inf_depth = np.percentile(depths_for_cam, .5), np.percentile(depths_for_cam, 99.5)
+            valid_depth_indices = depth[rays_for_cam] >= close_depth & depth[rays_for_cam] <= inf_depth
+            depths[rays_for_cam] = valid_depth_indices * depths[rays_for_cam]
+        
+        valid_depths = depths > 0
+        ray_indices = ray_indices[valid_depths]
+        depths = depths[valid_depths]
+        weights = weights[valid_depths]
+        """
 
         #TODO: How to cope with colmap rays that do not directly align with pixel grid?
         #      For generating clip and dino gt we currently require rays aligned to the pixel grid.
@@ -116,21 +129,20 @@ class ColmapDataloader:
         rgbs = image_list[c, y, x]
 
         self.data = torch.cat((ray_indices,rgbs,depths.unsqueeze(1),weights.unsqueeze(1)),dim=1)
-        print(self.data.shape)
 
-    def __call__(self):
+    def __call__(self, num_depth_rays):
         #generate n samples between 0 and ray_indices.shape[0]. DS-Nerf assumes half of all rays per iteration to be depth rays by default.
-        indices = torch.randperm(self.data.shape[0])[:self.cfg["num_rays"]]
+        indices = torch.randperm(self.data.shape[0])[:num_depth_rays]
         
         #index in datastructures
         selected_data = self.data[indices].to(self.device)
 
-        selected_ray_indices = selected_data[:,:3].type(torch.IntTensor)
+        selected_ray_indices = selected_data[:,:3].type(torch.LongTensor)
         selected_rgbs = selected_data[:,3:6]
         selected_depths = selected_data[:,6]
         selected_weights = selected_data[:,7]
 
-        #return ray bundle and depth and weights. Also return ray indices
+        #return ray indices, colors, depths, and weights 
         return selected_ray_indices,selected_rgbs,selected_depths,selected_weights
 
     def load(self):
