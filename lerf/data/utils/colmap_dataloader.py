@@ -10,6 +10,7 @@ from nerfstudio.process_data.images_to_nerfstudio_dataset import ImagesToNerfstu
 from nerfstudio.process_data.colmap_utils import *
 from nerfstudio.data.utils.colmap_parsing_utils import *
 from nerfstudio.cameras import camera_utils
+from nerfstudio.data.utils.pixel_sampling_utils import divide_rays_per_image
 
 from nerfstudio.data.dataparsers.scannetpp_dataparser import *
 
@@ -132,7 +133,10 @@ class ColmapDataloader:
 
     def __call__(self, num_depth_rays):
         #generate n samples between 0 and ray_indices.shape[0]. DS-Nerf assumes half of all rays per iteration to be depth rays by default.
-        indices = torch.randperm(self.data.shape[0])[:num_depth_rays]
+        indices = (
+            torch.rand((num_depth_rays), device=self.device)
+            * torch.tensor([self.data.shape[0]], device=self.device)
+        ).long()
         
         #index in datastructures
         selected_data = self.data[indices].to(self.device)

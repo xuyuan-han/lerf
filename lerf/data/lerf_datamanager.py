@@ -112,7 +112,7 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
                 device=self.device,
                 cfg={
                     "dir_path": str(config.dataparser.data / config.dataparser.colmap_path),
-                    "image_shape": list(images.shape[2:4]),
+                    "image_shape": list(images.permute(0,2,3,1).shape),
                 },
                 train_outputs=self.train_dataparser_outputs,
                 cache_path=colmap_cache_path,
@@ -153,13 +153,7 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
 
             #Append ray indices of colmap rays to ray_indices.
             ray_indices_sum = torch.cat((ray_indices,colmap_ray_indices),dim=0)
-            ray_bundle = self.train_ray_generator(ray_indices_sum)
-
-            """
-            torch.set_printoptions(threshold=10_000)
-            print(ray_indices_sum)
-            print(ray_bundle.camera_indices)
-            """
+            ray_bundle = self.train_ray_generator(ray_indices_sum)           
 
             #Add weights and depths, as well as indicator how many colmap rays we have to batch.
             batch["depths"] = colmap_depths
