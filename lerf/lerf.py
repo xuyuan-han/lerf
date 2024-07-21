@@ -21,6 +21,10 @@ from lerf.encoders.image_encoder import BaseImageEncoder
 from lerf.lerf_field import LERFField
 from lerf.lerf_fieldheadnames import LERFFieldHeadNames
 from lerf.lerf_renderers import CLIPRenderer, MeanRenderer
+from lerf.segment_anything import sam_model_registry, SamPredictor
+from lerf.sam_utils import generate_masked_img, get_feature_size
+import torch.nn as nn
+import time
 
 
 
@@ -35,6 +39,10 @@ class LERFModelConfig(NerfactoModelConfig):
     hashgrid_layers: Tuple[int] = (12, 12)
     hashgrid_resolutions: Tuple[Tuple[int]] = ((16, 128), (128, 512))
     hashgrid_sizes: Tuple[int] = (19, 19)
+    sam_checkpoint: str = "lerf\segment_anything\sam_vit_h_4b8939.pth"
+    sharpening_temperature: float = 10.0
+    dino_model: str = "dino_vits8"
+    sam_masks: bool = True
 
 
 class LERFModel(NerfactoModel):
@@ -128,6 +136,10 @@ class LERFModel(NerfactoModel):
         outputs["dino"] = self.renderer_mean(
             embeds=lerf_field_outputs[LERFFieldHeadNames.DINO], weights=lerf_weights.detach()
         )
+        if self.config.sam_masks:
+          outputs["sam"] = self.renderer_mean(embeds=lerf_field_outputs[LERFFieldHeadNames.SAM],
+                                          weights=lerf_weights.detach())
+
         """
         #TODO outputs for depth values
         # outputs["depth"] = self.renderer_depth(weights=lerf_weights, ray_samples=lerf_samples)
@@ -154,10 +166,14 @@ class LERFModel(NerfactoModel):
                 outputs["raw_relevancy"] = max_across  # N x B x 1
                 outputs["best_scales"] = best_scales.to(self.device)  # N
 
+
+        if ray_bundle.metadata is not None and "directions_norm" in ray_bundle.metadata:
+            outputs["directions_norm"] = ray_bundle.metadata["directions_norm"]
+
         return outputs
 
     @torch.no_grad()
-    def get_outputs_for_camera_ray_bundle(self, camera_ray_bundle: RayBundle) -> Dict[str, torch.Tensor]:
+    def get_outputs_for_camera_ray_bundle(self, camera_ray_bundle: RayBundle, intrin= None, c2w=None, points=None) -> Dict[str, torch.Tensor]:
         """Takes in camera parameters and computes the output of the model.
 
         LERF overrides this from base_model since we need to compute the max_across relevancy in multiple batches,
@@ -206,12 +222,16 @@ class LERFModel(NerfactoModel):
             if not torch.is_tensor(outputs_list[0]):
                 # TODO: handle lists of tensors as well
                 continue
+
             outputs[output_name] = torch.cat(outputs_list).view(image_height, image_width, -1)  # type: ignore
+
         for i in range(len(self.image_encoder.positives)):
             p_i = torch.clip(outputs[f"relevancy_{i}"] - 0.5, 0, 1)
             outputs[f"composited_{i}"] = apply_colormap(p_i / (p_i.max() + 1e-6), ColormapOptions("turbo"))
             mask = (outputs["relevancy_0"] < 0.5).squeeze()
             outputs[f"composited_{i}"][mask, :] = outputs["rgb"][mask, :]
+
+
         return outputs
 
     def _get_outputs_nerfacto(self, ray_samples: RaySamples):
@@ -219,7 +239,8 @@ class LERFModel(NerfactoModel):
         weights = ray_samples.get_weights(field_outputs[FieldHeadNames.DENSITY])
 
         rgb = self.renderer_rgb(rgb=field_outputs[FieldHeadNames.RGB], weights=weights)
-        depth = self.renderer_depth(weights=weights, ray_samples=ray_samples)
+        #depth = self.renderer_depth(weights=weights, ray_samples=ray_samples)
+        depth = self.renderer_expected_depth(weights=weights, ray_samples=ray_samples)
         accumulation = self.renderer_accumulation(weights=weights)
 
         outputs = {
@@ -239,9 +260,10 @@ class LERFModel(NerfactoModel):
             loss_dict["clip_loss"] = unreduced_clip.sum(dim=-1).nanmean()
             unreduced_dino = torch.nn.functional.mse_loss(outputs["dino"], batch["dino"], reduction="none")
             loss_dict["dino_loss"] = unreduced_dino.sum(dim=-1).nanmean()
-            #TODO depth loss
-            # unreduced_depth = torch.nn.functional.mse_loss(outputs["depth"], batch["depth"], reduction="none")
-            #loss_dict["depth_loss"] = depth_loss()
+            if self.config.sam_masks:
+              unreduced_sam = torch.nn.functional.mse_loss(outputs["sam"], batch["sam"], reduction="none")
+              loss_dict["sam_loss"] = unreduced_sam.mean(dim=-1).nanmean()
+
         return loss_dict
 
     def get_param_groups(self) -> Dict[str, List[Parameter]]:

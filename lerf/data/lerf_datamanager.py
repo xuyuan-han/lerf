@@ -40,7 +40,10 @@ from lerf.data.utils.pyramid_embedding_dataloader import PyramidEmbeddingDataloa
 from lerf.encoders.image_encoder import BaseImageEncoder
 from nerfstudio.data.datamanagers.base_datamanager import VanillaDataManager, VanillaDataManagerConfig
 from lerf.data.utils.colmap_dataloader import ColmapDataloader
+from lerf.data.utils.sam_dataloader import SAMDataloader
 
+# For SAM
+from lerf.data.utils.feature_dataloader import FeatureDataloader
 
 @dataclass
 class LERFDataManagerConfig(VanillaDataManagerConfig):
@@ -51,6 +54,7 @@ class LERFDataManagerConfig(VanillaDataManagerConfig):
     percent_depth_rays: float = 0.5
     compute_other_losses_for_depth_rays: bool = False
     generate_depth_rays: bool = True
+    generate_sam_masks: bool = True
 
 
 class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
@@ -92,6 +96,7 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
             config=config, device=device, test_mode=test_mode, world_size=world_size, local_rank=local_rank, **kwargs
         )
 
+
         #TODO: check if load_llff_data , Load the data using the utilities
         #images, poses, bds, render_poses, i_test = load_llff_data(config.dataparser.data_dir)
 
@@ -101,8 +106,11 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
 
         cache_dir = f"outputs/{self.config.dataparser.data.name}"
         clip_cache_path = Path(osp.join(cache_dir, f"clip_{self.image_encoder.name}"))
-        dino_cache_path = Path(osp.join(cache_dir, "dino.npy"))
+        dino_name = DinoDataloader.dino_type
+        dino_cache_path = Path(osp.join(cache_dir, f"dino_{dino_name}.npy"))
+        #dino_cache_path = Path(osp.join(cache_dir, "dino.npy"))
         # NOTE: cache config is sensitive to list vs. tuple, because it checks for dict equality
+
 
 
         # TODO: do we have to explicitly set the data loader for depth load_llff? Put it into utils?
@@ -123,6 +131,26 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
                 train_outputs=self.train_dataparser_outputs,
                 cache_path=colmap_cache_path,
             )
+
+        if config.generate_sam_masks:
+            # SAM feature filenames
+            sam_feature_filenames = [
+                    osp.join(
+                        osp.dirname(osp.dirname(name)), "sam_features",
+                        osp.basename(name).split(".")[0] + ".npy"
+                    )
+                    for name in self.train_dataparser_outputs.image_filenames
+            ]
+
+            # Load SAM data
+            self.sam_loader = SAMDataloader(
+                device=self.device,
+                image_paths=Path(self.config.dataparser.data /"images" ),
+                npy_paths=sam_feature_filenames,
+                npy_directory=Path(self.config.dataparser.data /"sam_features"),
+                image_shape= list(images.shape[2:4]),
+            )
+
 
         self.dino_dataloader = DinoDataloader(
             image_list=images,
@@ -178,9 +206,14 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
             batch["image"] = torch.cat((batch["image"],colmap_rgb.to(batch["image"])),dim=0)
             batch["clip"], clip_scale = self.clip_interpolator(ray_indices_sum)
             batch["dino"] = self.dino_dataloader(ray_indices_sum)
+            batch["sam"] = self.sam_loader(ray_indices)
         else:
             batch["clip"], clip_scale = self.clip_interpolator(ray_indices)
             batch["dino"] = self.dino_dataloader(ray_indices)
+
+        if self.config.generate_sam_masks:
+            batch["sam"] = self.sam_loader(ray_indices)
+
 
         ray_bundle.metadata["generate_depth_rays"] = self.config.generate_depth_rays
         ray_bundle.metadata["clip_scales"] = clip_scale
@@ -189,5 +222,4 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         ray_bundle.metadata["width"] = self.train_dataset.cameras[0].width.item()
         ray_bundle.metadata["fy"] = self.train_dataset.cameras[0].fy.item()
         ray_bundle.metadata["height"] = self.train_dataset.cameras[0].height.item()
-
         return ray_bundle, batch

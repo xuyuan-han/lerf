@@ -87,9 +87,10 @@ lerf_method_big = MethodSpecification(
         pipeline=LERFPipelineConfig(
             datamanager=LERFDataManagerConfig(
                 dataparser=NerfstudioDataParserConfig(train_split_fraction=0.99),
-                train_num_rays_per_batch=4096,
-                eval_num_rays_per_batch=4096,
+                train_num_rays_per_batch=4,
+                eval_num_rays_per_batch=4,
                 generate_depth_rays = False,
+                generate_sam_masks=True
             ),
             model=LERFModelConfig(
                 eval_num_rays_per_chunk=1 << 15,
@@ -98,6 +99,7 @@ lerf_method_big = MethodSpecification(
                 hashgrid_layers=(16, 16),
                 hashgrid_resolutions=((16, 128), (128, 512)),
                 num_lerf_samples=32,
+                sam_masks=True
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-L-14", clip_model_pretrained="laion2b_s32b_b82k", clip_n_dims=768
@@ -139,9 +141,10 @@ lerf_method_lite = MethodSpecification(
         pipeline=LERFPipelineConfig(
             datamanager=LERFDataManagerConfig(
                 dataparser=NerfstudioDataParserConfig(train_split_fraction=0.99), #ScanNetppDataParserConfig(), TODO: Write own scannetpp dataparser that supports downsampling and setting train_split_fraction
-                train_num_rays_per_batch=4096,
-                eval_num_rays_per_batch=4096,
+                train_num_rays_per_batch= 4096,  #4096,
+                eval_num_rays_per_batch= 4096,         #4096,
                 generate_depth_rays = False,
+                generate_sam_masks=False
             ),
             model=LERFModelConfig(
                 eval_num_rays_per_chunk=1 << 15,
@@ -149,6 +152,7 @@ lerf_method_lite = MethodSpecification(
                 hashgrid_layers=(16,),
                 hashgrid_resolutions=((16, 512),),
                 num_lerf_samples=12,
+                sam_masks=False
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512
@@ -195,6 +199,7 @@ lerf_method_depth = MethodSpecification(
                 eval_num_rays_per_batch=4096,
                 #generate_depth_rays = False,
                 #compute_other_losses_for_depth_rays=True, #TODO: currently generated radiance field gets negatively impacted when computing other losses for colmap rays. Semantic predictions seem unaffected.
+                generate_sam_masks = False
             ),
             model=LERFModelConfig(
                 eval_num_rays_per_chunk=1 << 15,
@@ -202,6 +207,7 @@ lerf_method_depth = MethodSpecification(
                 hashgrid_layers=(16,),
                 hashgrid_resolutions=((16, 512),),
                 num_lerf_samples=12,
+                sam_masks=True
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512
