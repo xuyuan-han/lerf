@@ -43,6 +43,7 @@ lerf_method = MethodSpecification(
                 hashgrid_layers=(12, 12),
                 hashgrid_resolutions=((16, 128), (128, 512)),
                 num_lerf_samples=24,
+                generate_depth_rays = False,
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512
@@ -98,6 +99,7 @@ lerf_method_big = MethodSpecification(
                 hashgrid_layers=(16, 16),
                 hashgrid_resolutions=((16, 128), (128, 512)),
                 num_lerf_samples=32,
+                generate_depth_rays = False,
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-L-14", clip_model_pretrained="laion2b_s32b_b82k", clip_n_dims=768
@@ -149,6 +151,7 @@ lerf_method_lite = MethodSpecification(
                 hashgrid_layers=(16,),
                 hashgrid_resolutions=((16, 512),),
                 num_lerf_samples=12,
+                generate_depth_rays = False,
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512
@@ -202,7 +205,9 @@ lerf_method_depth = MethodSpecification(
                 hashgrid_layers=(16,),
                 hashgrid_resolutions=((16, 512),),
                 num_lerf_samples=12,
-                camera_optimizer=CameraOptimizerConfig(mode="off") #TODO: Camera optimization leads to fragmentations in novel views. Investigate why this happens
+                camera_optimizer= CameraOptimizerConfig(mode="SO3xR3",trans_l2_penalty=1e-1,rot_l2_penalty=1e-2), #Default camera optimizer parameters of nerfacto led to noisy view synthesis
+                compute_other_losses_for_depth_rays=True,
+                #learnable_depth_scale=True #less distortion loss, but a bit worse than with fixed scale
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512
@@ -220,6 +225,10 @@ lerf_method_depth = MethodSpecification(
             "lerf": {
                 "optimizer": RAdamOptimizerConfig(lr=1e-2, eps=1e-15, weight_decay=1e-9),
                 "scheduler": ExponentialDecaySchedulerConfig(lr_final=1e-3, max_steps=7000),
+            },
+            "depthAlign": {
+                "optimizer": AdamOptimizerConfig(lr=1e-2, eps=1e-15),
+                "scheduler": None,
             },
             "camera_opt": {
                 "optimizer": AdamOptimizerConfig(lr=1e-3, eps=1e-15),

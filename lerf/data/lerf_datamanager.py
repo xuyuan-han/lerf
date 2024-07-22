@@ -91,9 +91,9 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
             #calculate number of depth rays to sample based on input training rays and adapt config for datamanager accordingly
             self.num_depth_rays_per_batch = int(config.percent_depth_rays * config.train_num_rays_per_batch)
 
-            if config.compute_other_losses_for_depth_rays:
-                num_train_rays = config.train_num_rays_per_batch - self.num_depth_rays_per_batch
-                self.train_pixel_sampler.set_num_rays_per_batch(num_train_rays)
+            if config.compute_other_losses_for_depth_rays and self.train_pixel_sampler:
+                    num_train_rays = config.train_num_rays_per_batch - self.num_depth_rays_per_batch
+                    self.train_pixel_sampler.set_num_rays_per_batch(num_train_rays)
 
         self.image_encoder: BaseImageEncoder = kwargs["image_encoder"]
         images = [self.train_dataset[i]["image"].permute(2, 0, 1)[None, ...] for i in range(len(self.train_dataset))]
@@ -179,10 +179,6 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
 
             batch["dino"] = self.dino_dataloader(ray_indices)
 
-        batch["generate_depth_rays"] = self.config.generate_depth_rays
-        batch["compute_other_losses_for_depth_rays"] = self.config.compute_other_losses_for_depth_rays
-        ray_bundle.metadata["compute_other_losses_for_depth_rays"] = self.config.compute_other_losses_for_depth_rays
-        ray_bundle.metadata["generate_depth_rays"] = self.config.generate_depth_rays
         ray_bundle.metadata["clip_scales"] = clip_scale
         # assume all cameras have the same focal length and image width
         ray_bundle.metadata["fx"] = self.train_dataset.cameras[0].fx.item()

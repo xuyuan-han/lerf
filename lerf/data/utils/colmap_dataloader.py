@@ -99,21 +99,38 @@ class ColmapDataloader:
         weights = torch.tensor(weights)
         ray_indices = torch.stack(ray_indices,dim=0)
 
-        #TODO: check how to compute bounds. In DS-Nerf they precompute percentiles for min and max depths for each posed image (close_depth, inf_depth = np.percentile(zs, .5), np.percentile(zs, 99.5)). This is then used in the following to filter points. Also they employ some scaling factor bd_factor (usually set to 0.75).
-        """
+        #Compute percentiles for min and max depths for each posed image and filter points based on that to avoid outliers
+        min_percentiles = []
+        max_percentiles = []
         for i in range(len(image_filenames)):
             rays_for_cam = (ray_indices[:,0] == i)
-            depths_for_cam = depths[rays_for_cam]
+            depths_for_cam = np.array(depths[rays_for_cam])
             close_depth, inf_depth = np.percentile(depths_for_cam, .5), np.percentile(depths_for_cam, 99.5)
-            valid_depth_indices = depth[rays_for_cam] >= close_depth & depth[rays_for_cam] <= inf_depth
+            valid_depth_indices = (depths[rays_for_cam] >= close_depth) & (depths[rays_for_cam] <= inf_depth)
             depths[rays_for_cam] = valid_depth_indices * depths[rays_for_cam]
+            min_percentiles.append(close_depth)
+            max_percentiles.append(inf_depth)
         
         valid_depths = depths > 0
         ray_indices = ray_indices[valid_depths]
         depths = depths[valid_depths]
         weights = weights[valid_depths]
-        """
+        print("# valid colmap points: ", str(ray_indices.shape[0]))
 
+        #depth scaling (omitt for now)
+        """
+        min_depth = np.min(np.array(min_percentiles))
+        max_depth = np.max(np.array(max_percentiles))
+        print("Before:")
+        print("Min: ", str(torch.min(depths).item()))
+        print("Max: ", str(torch.max(depths).item()))
+        scale = 1./(min_depth * 0.75)
+        depths *=scale
+        print("After:")
+        print("Min: ", str(torch.min(depths).item()))
+        print("Max: ", str(torch.max(depths).item()))
+        """
+        
         #TODO: How to cope with colmap rays that do not directly align with pixel grid?
         #      For generating clip and dino gt we currently require rays aligned to the pixel grid.
         #      Nerfstudio assumes integer coordinates between 0 and width-1/height-1 in ray indices array. These get then mapped to image coordinates by applying +0.5
@@ -134,8 +151,8 @@ class ColmapDataloader:
     def __call__(self, num_depth_rays):
         #generate n samples between 0 and ray_indices.shape[0]. DS-Nerf assumes half of all rays per iteration to be depth rays by default.
         indices = (
-            torch.rand((num_depth_rays), device=self.device)
-            * torch.tensor([self.data.shape[0]], device=self.device)
+            torch.rand((num_depth_rays))
+            * torch.tensor([self.data.shape[0]])
         ).long()
         
         #index in datastructures

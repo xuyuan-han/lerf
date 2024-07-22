@@ -11,6 +11,7 @@ from nerfstudio.field_components.field_heads import FieldHeadNames
 from nerfstudio.field_components.spatial_distortions import SceneContraction
 from nerfstudio.model_components.ray_samplers import PDFSampler
 from nerfstudio.model_components.renderers import DepthRenderer
+from nerfstudio.model_components.losses import distortion_loss
 from nerfstudio.models.nerfacto import NerfactoModel, NerfactoModelConfig
 from nerfstudio.utils.colormaps import ColormapOptions, apply_colormap
 from nerfstudio.viewer.viewer_elements import *
@@ -35,6 +36,9 @@ class LERFModelConfig(NerfactoModelConfig):
     hashgrid_layers: Tuple[int] = (12, 12)
     hashgrid_resolutions: Tuple[Tuple[int]] = ((16, 128), (128, 512))
     hashgrid_sizes: Tuple[int] = (19, 19)
+    compute_other_losses_for_depth_rays: bool = False
+    generate_depth_rays: bool = True
+    learnable_depth_scale: bool = False
 
 
 class LERFModel(NerfactoModel):
@@ -53,15 +57,16 @@ class LERFModel(NerfactoModel):
             self.config.hashgrid_resolutions,
             clip_n_dims=self.image_encoder.embedding_dim,
         )
+        if self.config.learnable_depth_scale:
+            self.depth_scale = torch.nn.Parameter(torch.tensor(.1))
 
     def get_max_across(self, ray_samples, weights, hashgrid_field, scales_shape, preset_scales=None):
         # TODO smoothen this out
         if preset_scales is not None:
             assert len(preset_scales) == len(self.image_encoder.positives)
-            scales_list = torch.tensor(preset_scales)
+            scales_list = preset_scales.clone().detach()
         else:
             scales_list = torch.linspace(0.0, self.config.max_scale, self.config.n_scales)
-
         # probably not a good idea bc it's prob going to be a lot of memory
         n_phrases = len(self.image_encoder.positives)
         n_phrases_maxs = [None for _ in range(n_phrases)]
@@ -86,33 +91,6 @@ class LERFModel(NerfactoModel):
         return torch.stack(n_phrases_sims), torch.Tensor(n_phrases_maxs)
 
     def get_outputs(self, ray_bundle: RayBundle):
-        """
-        #TODO split ray_bundle in depth rays and others
-        if self.training and ray_bundle.metadata["generate_depth_rays"]:
-                depth_start_index = ray_bundle.origins.shape[0] - ray_bundle.metadata["num_depth_rays"]
-
-                if ray_bundle.metadata is not None and "directions_norm" in ray_bundle.metadata:
-                        outputs_d = {
-                            "directions_norm": ray_bundle.metadata["directions_norm"][depth_start_index:]
-                            }
-                else:
-                    outputs_d = {}
-
-                if not ray_bundle.metadata["compute_other_losses_for_depth_rays"]:
-                    #split ray bundle
-                    ray_bundle_depth = ray_bundle[depth_start_index:]
-                    ray_bundle = ray_bundle[:depth_start_index]
-
-                    #compute the only outputs we need for computing depth loss
-                    ray_samples_d, weights_list_d, ray_samples_list_d = self.proposal_sampler(ray_bundle_depth, density_fns=self.density_fns)
-                    ray_samples_list_d.append(ray_samples_d)
-                    nerfacto_field_outputs_d,outputs_nerfacto, weights_d = self._get_outputs_nerfacto(ray_samples_d)
-                    outputs_d["expected_depth_d"] = outputs_nerfacto["expected_depth"]
-                    weights_list_d.append(weights_d)
-                    outputs_d["weights_list_d"] = weights_list_d
-                    outputs_d["ray_samples_list_d"] = ray_samples_list_d
-        """
-
         if self.training:
             self.camera_optimizer.apply_to_raybundle(ray_bundle)
         ray_samples, weights_list, ray_samples_list = self.proposal_sampler(ray_bundle, density_fns=self.density_fns)
@@ -168,14 +146,14 @@ class LERFModel(NerfactoModel):
                 outputs["raw_relevancy"] = max_across  # N x B x 1
                 outputs["best_scales"] = best_scales.to(self.device)  # N
 
-        if self.training and ray_bundle.metadata["generate_depth_rays"]:
+        if self.training and self.config.generate_depth_rays:
             depth_start_index = ray_bundle.origins.shape[0] - ray_bundle.metadata["num_depth_rays"]
 
             if ray_bundle.metadata is not None and "directions_norm" in ray_bundle.metadata:
                 outputs["directions_norm"] = ray_bundle.metadata["directions_norm"][depth_start_index:]
 
             #exclude results from depth rays when not computing other losses
-            if not ray_bundle.metadata["compute_other_losses_for_depth_rays"]:
+            if not self.config.compute_other_losses_for_depth_rays:
                 outputs["rgb"] = outputs["rgb"][:depth_start_index]
                 outputs["accumulation"] = outputs["accumulation"][:depth_start_index]
                 outputs["depth"] = outputs["depth"][:depth_start_index]
@@ -283,39 +261,51 @@ class LERFModel(NerfactoModel):
             loss_dict["dino_loss"] = unreduced_dino.sum(dim=-1).nanmean()
             
             #TODO depth loss
-            if batch["generate_depth_rays"]:
-
+            if self.config.generate_depth_rays:
                 #filter needed information for depth loss
                 loss_dict["depth_loss"] = 0.0
-                sigma = batch["sigma"].to(self.device)
-                termination_depth = batch["depths"].to(self.device).unsqueeze(1)
+                sigma = 0.01 #In the nerfacto implementation  of the ds-nerf loss they expect a single sigma for all values instead per point
 
+                termination_depth = batch["depths"].to(self.device).unsqueeze(1) 
+                if self.config.learnable_depth_scale:
+                    termination_depth *= torch.abs(self.depth_scale)
+
+                depth_start_index = outputs["depth"].shape[0] - batch["num_depth_rays"]
+                
                 for i in range(len(outputs["weights_list"])):
-                        if batch["compute_other_losses_for_depth_rays"]:
-                            depth_start_index = outputs["depth"].shape[0] - batch["num_depth_rays"]
+                        if self.config.compute_other_losses_for_depth_rays:
                             ray_samples = outputs["ray_samples_list"][i][depth_start_index:]
                             weights = outputs["weights_list"][i][depth_start_index:]
-                            #pred_depth = outputs["expected_depth"][depth_start_index:]
                         else:
                             ray_samples = outputs["ray_samples_list_d"][i]
                             weights = outputs["weights_list_d"][i]
-                            #pred_depth = outputs["expected_depth_d"]
 
                         loss_dict["depth_loss"] += depth_loss(
                             weights=weights,
                             ray_samples=ray_samples,
                             termination_depth=termination_depth,
-                            predicted_depth=None, #Theoretically we don't need this pred_depth
+                            predicted_depth=None,
                             sigma=sigma,
                             directions_norm=outputs["directions_norm"],
-                            is_euclidean=False, #TODO: check what works best here
+                            is_euclidean=False,
                             depth_loss_type=DepthLossType.DS_NERF,
                         ) / len(outputs["weights_list"])
-            
-                loss_dict["depth_loss"] = 1e-3 * loss_dict["depth_loss"] #TODO: check what works best here
+                
+                loss_dict["depth_loss"] = 1e-3 * loss_dict["depth_loss"]
+
+                #mse loss
+                """
+                if batch["compute_other_losses_for_depth_rays"]:
+                    loss_dict["depth_loss_mse"] =  1e-2 * torch.mean(((outputs["expected_depth"][depth_start_index:] - termination_depth) ** 2) * sigma)
+                else:
+                    loss_dict["depth_loss_mse"] =  1e-2 * torch.mean(((outputs["expected_depth_d"] - termination_depth) ** 2) * sigma)
+                """
+
         return loss_dict
 
     def get_param_groups(self) -> Dict[str, List[Parameter]]:
         param_groups = super().get_param_groups()
         param_groups["lerf"] = list(self.lerf_field.parameters())
+        if self.config.generate_depth_rays and self.config.learnable_depth_scale:
+            param_groups["depthAlign"] = [self.depth_scale]
         return param_groups
