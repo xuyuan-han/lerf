@@ -1,17 +1,23 @@
-# LERF: Language Embedded Radiance Fields
-This is the official implementation for [LERF](https://lerf.io).
-
+# Extending LERF: Language Embedded Radiance Fields
+This is our modified version of [LERF](https://lerf.io) for the semester project in Machine Learning for 3D Geometry (IN2392) at TUM.\
+Our version of LeRF contains the following modifications:
+- A depth supervision based on SFM point cloud points similar to DS-NeRF aiming at improving Novel View Synthesis quality
+- An upgrade of DINO to DINOv2 for improved language field quality and stronger regularization
+- An additional regularization based on SAM features to further improve language field quality
 
 <div align='center'>
 <img src="https://www.lerf.io/data/nerf_render.svg" height="230px">
 </div>
+
+#### TODOs
+- [ ] Filter relevancy maps based on SAM mask predictions to acquire more precise results
 
 # Installation
 LERF follows the integration guidelines described [here](https://docs.nerf.studio/en/latest/developer_guides/new_methods.html) for custom methods within Nerfstudio. 
 ### 0. Install Nerfstudio dependencies
 [Follow these instructions](https://docs.nerf.studio/en/latest/quickstart/installation.html) up to and including "tinycudann" to install dependencies and create an environment
 ### 1. Clone this repo
-`git clone https://github.com/kerrj/lerf`
+`git clone https://github.com/xuyuan-han/lerf`
 ### 2. Install this repo as a python package
 Navigate to this folder and run `python -m pip install -e .`
 
@@ -21,9 +27,9 @@ Navigate to this folder and run `python -m pip install -e .`
 Run `ns-train -h`: you should see a list of "subcommands" with lerf, lerf-big, and lerf-lite included among them.
 
 # Using LERF
-Now that LERF is installed you can play with it! 
+Since we were constrained by the available GPU memory, we provide multiple configurations, one per modification: `lerf-depth`, `lerf-sam`, `lerf-dino`. All of our configurations are based on `lerf-lite`. Additionally, for `lerf-depth`, we assume that preprocessed COLMAP data is already available within the dataset, which is the case for all ScanNet++ scenes and basic Nerfstudio scenes, but not for the scenes provided by LeRF.
 
-- Launch training with `ns-train lerf --data <data_folder>`. This specifies a data folder to use. For more details, see [Nerfstudio documentation](https://docs.nerf.studio/en/latest/quickstart/first_nerf.html). 
+- Launch training with `ns-train <configuration> --data <data_folder>`. This specifies a data folder to use. For more details, see [Nerfstudio documentation](https://docs.nerf.studio/en/latest/quickstart/first_nerf.html). 
 - Connect to the viewer by forwarding the viewer port (we use VSCode to do this), and click the link to `viewer.nerf.studio` provided in the output of the train script
 - Within the viewer, you can type text into the textbox, then select the `relevancy_0` output type to visualize relevancy maps.
 
@@ -40,30 +46,14 @@ The images below show the rgb, raw, centered, and normalized output views for th
 <img src="readme_images/lily_normalized.jpg" width="150px">
 </div>
 
+## Computing Localization Accuracy
+We provide our own script for computing the localization accuracy like it is described in the paper. This is, however, only possible on the original LeRF scenes `bouquet`, `figurines`, `ramen`, `teatime`, and `waldo_kitchen` since we adapted their already available evaluation data.
 
-## Resolution
-The Nerfstudio viewer dynamically changes resolution to achieve a desired training throughput.
+The localization accuracy can be computed by running `python eval_location.py --load-config <config> --camera-path-filename eval\<scene_name>\keyframes.json --query_path_filename eval\<scene_name>\queries.json`, where `config` is a path to the config file of the run on the respective scene that is to be evaluated.
 
-**To increase resolution, pause training**. Rendering at high resolution (512 or above) can take a second or two, so we recommend rendering at 256px
-## `lerf-big` and `lerf-lite`
-If your GPU is struggling on memory, we provide a `lerf-lite` implementation that reduces the LERF network capacity and number of samples along rays. If you find you still need to reduce memory footprint, the most impactful parameters for memory are `num_lerf_samples`, hashgrid levels, and hashgrid size.
-
-`lerf-big` provides a larger model that uses ViT-L/14 instead of ViT-B/16 for those with large memory GPUs.
-
-# Extending LERF
-Be mindful that code for visualization will change as more features are integrated into Nerfstudio, so if you fork this repo and build off of it, check back regularly for extra changes.
-### Issues
-Please open Github issues for any installation/usage problems you run into. We've tried to support as broad a range of GPUs as possible with `lerf-lite`, but it might be necessary to provide even more low-footprint versions. Thank you!
-#### Known TODOs
-- [ ] Integrate into `ns-render` commands to render videos from the command line with custom prompts
-### Using custom image encoders
-We've designed the code to modularly accept any image encoder that implements the interface in `BaseImageEncoder` (`image_encoder.py`). An example of different encoder implementations can be seen in `clip_encoder.py` vs `openclip_encoder.py`, which implement OpenAI's CLIP and OpenCLIP respectively.
-### Code structure
-(TODO expand this section)
-The main file to look at for editing and building off LERF is `lerf.py`, which extends the Nerfacto model from Nerfstudio, adds an additional language field, losses, and visualization. The CLIP and DINO pre-processing are carried out by `pyramid_interpolator.py` and `dino_dataloader.py`.
 
 ## Bibtex
-If you find this useful, please cite the paper!
+Our work is based on the LeRF paper:
 <pre id="codecell0">@inproceedings{lerf2023,
 &nbsp;author = {Kerr, Justin and Kim, Chung Min and Goldberg, Ken and Kanazawa, Angjoo and Tancik, Matthew},
 &nbsp;title = {LERF: Language Embedded Radiance Fields},
