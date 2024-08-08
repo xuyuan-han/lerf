@@ -1,0 +1,856 @@
+{
+  "version": "4.5.12",
+  "flags": {},
+  "keyframes": [
+    {
+      "shapes": [
+        {
+          "label": "egg",
+          "points": [
+            [
+              190.96774193548384,
+              132.65591397849462
+            ],
+            [
+              267.9569892473118,
+              226.8494623655914
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pork belly",
+          "points": [
+            [
+              244.08602150537632,
+              66.20430107526882
+            ],
+            [
+              353.1182795698924,
+              175.4516129032258
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "nori",
+          "points": [
+            [
+              130.96774193548387,
+              175.66666666666666
+            ],
+            [
+              258,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "wavy noodles",
+          "points": [
+            [
+              249.6774193548387,
+              146.8494623655914
+            ],
+            [
+              343.87096774193543,
+              231.36559139784944
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "chopsticks",
+          "points": [
+            [
+              357.84946236559136,
+              67.06451612903226
+            ],
+            [
+              390,
+              269
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "glass of water",
+          "points": [
+            [
+              134.83870967741933,
+              137.81720430107526
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "vamen",
+          "points": [
+            [
+              127.5268817204301,
+              0.8279569892473102
+            ],
+            [
+              388,
+              269
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "green onion",
+          "points": [
+            [
+              220.21505376344084,
+              57.6021505376344
+            ],
+            [
+              290.3225806451613,
+              110.07526881720429
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "broth",
+          "points": [
+            [
+              174.62365591397847,
+              61.47311827956989
+            ],
+            [
+              344.9462365591398,
+              232.2258064516129
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "napkin",
+          "points": [
+            [
+              136.98924731182794,
+              51.1505376344086
+            ],
+            [
+              39,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "sake cup",
+          "points": [
+            [
+              382.5806451612903,
+              81.68817204301075
+            ],
+            [
+              443.4408602150537,
+              137.17204301075267
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "egg",
+          "points": [
+            [
+              178.49462365591395,
+              132.2258064516129
+            ],
+            [
+              272.47311827956986,
+              252.44086021505376
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "wavy noodles",
+          "points": [
+            [
+              251.61290322580643,
+              155.23655913978493
+            ],
+            [
+              370.1075268817204,
+              255.02150537634407
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "green onion",
+          "points": [
+            [
+              213.9784946236559,
+              45.55913978494623
+            ],
+            [
+              299.3548387096774,
+              108.13978494623655
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pork belly",
+          "points": [
+            [
+              248.6021505376344,
+              54.376344086021504
+            ],
+            [
+              376.7741935483871,
+              182.9784946236559
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "nori",
+          "points": [
+            [
+              96.12903225806451,
+              187.06451612903226
+            ],
+            [
+              260,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "glass of water",
+          "points": [
+            [
+              102.58064516129032,
+              130.50537634408602
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "ramen",
+          "points": [
+            [
+              92.47311827956989,
+              0.18279569892473013
+            ],
+            [
+              430,
+              269
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "chopsticks",
+          "points": [
+            [
+              415.4838709677419,
+              227.70967741935482
+            ],
+            [
+              397,
+              269
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "chopsticks",
+          "points": [
+            [
+              411.8279569892473,
+              73.94623655913978
+            ],
+            [
+              479,
+              131
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "broth",
+          "points": [
+            [
+              154.6236559139785,
+              53.516129032258064
+            ],
+            [
+              376.34408602150535,
+              257.38709677419354
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "egg",
+          "points": [
+            [
+              170.752688172043,
+              119.32258064516128
+            ],
+            [
+              244.94623655913978,
+              197.17204301075267
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "wavy noodles",
+          "points": [
+            [
+              370.5376344086021,
+              34.59139784946236
+            ],
+            [
+              470.5376344086021,
+              78.89247311827957
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "wavy noodles",
+          "points": [
+            [
+              229.6774193548387,
+              138.03225806451613
+            ],
+            [
+              335.4838709677419,
+              204.0537634408602
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "ramen",
+          "points": [
+            [
+              366.66666666666663,
+              53.08602150537634
+            ],
+            [
+              255,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "ramen",
+          "points": [
+            [
+              95.26881720430107,
+              0.39784946236559016
+            ],
+            [
+              396.5591397849462,
+              222.33333333333331
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "nori",
+          "points": [
+            [
+              118.49462365591397,
+              134.59139784946237
+            ],
+            [
+              268,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "green onion",
+          "points": [
+            [
+              222.5806451612903,
+              86.20430107526882
+            ],
+            [
+              294.83870967741933,
+              114.59139784946235
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "green onion",
+          "points": [
+            [
+              398.4946236559139,
+              44.69892473118279
+            ],
+            [
+              442.5806451612903,
+              64.05376344086021
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "sake cup",
+          "points": [
+            [
+              285.1612903225806,
+              53.08602150537634
+            ],
+            [
+              318.06451612903226,
+              70.07526881720429
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "sake cup",
+          "points": [
+            [
+              416.1290322580645,
+              141.04301075268816
+            ],
+            [
+              479,
+              206
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "glass of water",
+          "points": [
+            [
+              55.26881720430107,
+              141.4731182795699
+            ],
+            [
+              143.87096774193546,
+              0.6129032258064502
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "glass of water",
+          "points": [
+            [
+              229.89247311827955,
+              30.72043010752688
+            ],
+            [
+              190,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pork belly",
+          "points": [
+            [
+              247.09677419354836,
+              162.76344086021504
+            ],
+            [
+              354.19354838709677,
+              91.36559139784946
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "napkin",
+          "points": [
+            [
+              407.7419354838709,
+              185.34408602150535
+            ],
+            [
+              363.22580645161287,
+              151.15053763440858
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "bowl",
+          "points": [
+            [
+              106.23655913978494,
+              53.516129032258064
+            ],
+            [
+              396.1290322580645,
+              228.7849462365591
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "bowl",
+          "points": [
+            [
+              364.9462365591398,
+              55.236559139784944
+            ],
+            [
+              258,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "egg",
+          "points": [
+            [
+              166.02150537634407,
+              148.3548387096774
+            ],
+            [
+              253.76344086021504,
+              259.752688172043
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "ramen",
+          "points": [
+            [
+              78.06451612903226,
+              18.462365591397848
+            ],
+            [
+              419,
+              269
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "ramen",
+          "points": [
+            [
+              332.68817204301075,
+              21.90322580645161
+            ],
+            [
+              411.6129032258064,
+              45.77419354838709
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "wavy noodles",
+          "points": [
+            [
+              218.2795698924731,
+              184.91397849462365
+            ],
+            [
+              386,
+              269
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "wavy noodles",
+          "points": [
+            [
+              444.7311827956989,
+              69.21505376344085
+            ],
+            [
+              479,
+              110
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "green onion",
+          "points": [
+            [
+              250.75268817204298,
+              115.23655913978493
+            ],
+            [
+              341.505376344086,
+              149.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pork belly",
+          "points": [
+            [
+              271.8279569892473,
+              125.55913978494624
+            ],
+            [
+              416.1290322580645,
+              233.3010752688172
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "bowl",
+          "points": [
+            [
+              310.96774193548384,
+              9.64516129032258
+            ],
+            [
+              446.02150537634407,
+              81.68817204301075
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "bowl",
+          "points": [
+            [
+              77.63440860215053,
+              78.6774193548387
+            ],
+            [
+              478,
+              269
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "glass of water",
+          "points": [
+            [
+              81.93548387096773,
+              4.913978494623654
+            ],
+            [
+              171.1827956989247,
+              128.3548387096774
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "glass of water",
+          "points": [
+            [
+              288.38709677419354,
+              68.56989247311827
+            ],
+            [
+              231,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "nori",
+          "points": [
+            [
+              114.40860215053763,
+              13.086021505376344
+            ],
+            [
+              309.247311827957,
+              162.9784946236559
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "broth",
+          "points": [
+            [
+              153.9784946236559,
+              117.17204301075267
+            ],
+            [
+              410.3225806451613,
+              268.7849462365591
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "broth",
+          "points": [
+            [
+              336.5591397849462,
+              23.838709677419352
+            ],
+            [
+              414.83870967741933,
+              45.77419354838709
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "sake cup",
+          "points": [
+            [
+              340.43010752688167,
+              78.46236559139784
+            ],
+            [
+              374.62365591397844,
+              105.55913978494623
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    }
+  ],
+  "imageHeight": 270,
+  "imageWidth": 480
+}

@@ -1,0 +1,952 @@
+{
+  "version": "4.5.12",
+  "flags": {},
+  "keyframes": [
+    {
+      "shapes": [
+        {
+          "label": "red mug",
+          "points": [
+            [
+              65.3763440860215,
+              245.9892473118279
+            ],
+            [
+              93.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pour-over vessel",
+          "points": [
+            [
+              431.1827956989247,
+              210.29032258064515
+            ],
+            [
+              478.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "olive oil",
+          "points": [
+            [
+              31.18279569892473,
+              76.31182795698923
+            ],
+            [
+              63.44086021505376,
+              130.93548387096774
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "olive oil",
+          "points": [
+            [
+              22.36559139784946,
+              167.92473118279568
+            ],
+            [
+              1.2903225806451613,
+              231.15053763440858
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "vegetable oil",
+          "points": [
+            [
+              3.6559139784946235,
+              65.34408602150538
+            ],
+            [
+              42.79569892473118,
+              137.17204301075267
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "cookbooks",
+          "points": [
+            [
+              187.52688172043008,
+              68.13978494623656
+            ],
+            [
+              220.21505376344084,
+              125.34408602150538
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "waldo",
+          "points": [
+            [
+              228.6021505376344,
+              100.61290322580645
+            ],
+            [
+              239.13978494623655,
+              121.25806451612902
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "dish soap",
+          "points": [
+            [
+              166.88172043010752,
+              158.46236559139783
+            ],
+            [
+              189.6774193548387,
+              205.34408602150535
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "sink",
+          "points": [
+            [
+              233.54838709677418,
+              268.7849462365591
+            ],
+            [
+              9.677419354838708,
+              192.01075268817203
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "faucet",
+          "points": [
+            [
+              85.80645161290322,
+              194.37634408602148
+            ],
+            [
+              146.66666666666666,
+              224.69892473118279
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "copper-bottom pot",
+          "points": [
+            [
+              193.33333333333331,
+              156.9569892473118
+            ],
+            [
+              247.09677419354836,
+              190.0752688172043
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "utensils",
+          "points": [
+            [
+              225.16129032258064,
+              135.4516129032258
+            ],
+            [
+              259.13978494623655,
+              174.8064516129032
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spice rack",
+          "points": [
+            [
+              337.41935483870964,
+              64.26881720430107
+            ],
+            [
+              448.17204301075265,
+              154.3763440860215
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "coffee grinder",
+          "points": [
+            [
+              261.505376344086,
+              151.79569892473117
+            ],
+            [
+              283.8709677419355,
+              190.50537634408602
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "blue hydroflask",
+          "points": [
+            [
+              209.24731182795696,
+              183.83870967741933
+            ],
+            [
+              230.96774193548384,
+              217.17204301075267
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "paper towel roll",
+          "points": [
+            [
+              83.01075268817203,
+              134.8064516129032
+            ],
+            [
+              164.08602150537632,
+              159.32258064516128
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "scrub brush",
+          "points": [
+            [
+              53.54838709677419,
+              139.96774193548387
+            ],
+            [
+              78.06451612903226,
+              199.53763440860214
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "power outlet",
+          "points": [
+            [
+              2.365591397849462,
+              145.77419354838707
+            ],
+            [
+              30.32258064516129,
+              173.94623655913978
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "power outlet",
+          "points": [
+            [
+              293.3333333333333,
+              121.25806451612902
+            ],
+            [
+              308.38709677419354,
+              142.33333333333331
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "cooking tongs",
+          "points": [
+            [
+              240.64516129032256,
+              138.89247311827955
+            ],
+            [
+              256.55913978494624,
+              170.93548387096772
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "olive oil",
+          "points": [
+            [
+              182.36559139784944,
+              76.74193548387096
+            ],
+            [
+              198.49462365591395,
+              123.83870967741933
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pour-over vessel",
+          "points": [
+            [
+              341.2903225806451,
+              247.92473118279565
+            ],
+            [
+              392.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "knives",
+          "points": [
+            [
+              300.21505376344084,
+              16.096774193548384
+            ],
+            [
+              382.1505376344086,
+              125.55913978494624
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spice rack",
+          "points": [
+            [
+              126.02150537634408,
+              73.08602150537634
+            ],
+            [
+              275.26881720430106,
+              183.62365591397847
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "coffee grinder",
+          "points": [
+            [
+              7.741935483870967,
+              255.88172043010752
+            ],
+            [
+              45.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "power outlet",
+          "points": [
+            [
+              47.526881720430104,
+              174.16129032258064
+            ],
+            [
+              69.03225806451613,
+              207.2795698924731
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "cookbooks",
+          "points": [
+            [
+              99.99999999999999,
+              12.2258064516129
+            ],
+            [
+              164.3010752688172,
+              107.06451612903224
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "waldo",
+          "points": [
+            [
+              185.8064516129032,
+              73.73118279569891
+            ],
+            [
+              206.4516129032258,
+              103.40860215053763
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "dish soap",
+          "points": [
+            [
+              97.41935483870967,
+              148.78494623655914
+            ],
+            [
+              130.96774193548387,
+              207.06451612903223
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "sink",
+          "points": [
+            [
+              0.0,
+              181.9032258064516
+            ],
+            [
+              125.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "faucet",
+          "points": [
+            [
+              0.6451612903225806,
+              182.11827956989245
+            ],
+            [
+              77.84946236559139,
+              210.50537634408602
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "copper-bottom pot",
+          "points": [
+            [
+              136.55913978494624,
+              154.3763440860215
+            ],
+            [
+              191.39784946236557,
+              221.25806451612902
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "utensils",
+          "points": [
+            [
+              171.39784946236557,
+              126.2043010752688
+            ],
+            [
+              218.92473118279568,
+              187.2795698924731
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spice rack",
+          "points": [
+            [
+              391.1827956989247,
+              27.924731182795696
+            ],
+            [
+              479.0,
+              196.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "coffee grinder",
+          "points": [
+            [
+              237.2043010752688,
+              162.9784946236559
+            ],
+            [
+              275.4838709677419,
+              222.33333333333331
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "blue hydroflask",
+          "points": [
+            [
+              68.81720430107526,
+              206.41935483870967
+            ],
+            [
+              118.49462365591397,
+              256.9569892473118
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "paper towel roll",
+          "points": [
+            [
+              0.2150537634408602,
+              106.2043010752688
+            ],
+            [
+              91.39784946236558,
+              139.32258064516128
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "power outlet",
+          "points": [
+            [
+              329.247311827957,
+              114.80645161290322
+            ],
+            [
+              354.4086021505376,
+              143.19354838709677
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "cooking tongs",
+          "points": [
+            [
+              195.69892473118279,
+              133.3010752688172
+            ],
+            [
+              218.2795698924731,
+              188.13978494623655
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "red mug",
+          "points": [
+            [
+              176.1290322580645,
+              221.04301075268816
+            ],
+            [
+              204.3010752688172,
+              263.19354838709677
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "olive oil",
+          "points": [
+            [
+              41.0752688172043,
+              115.23655913978493
+            ],
+            [
+              133.54838709677418,
+              198.0322580645161
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "olive oil",
+          "points": [
+            [
+              137.8494623655914,
+              18.247311827956988
+            ],
+            [
+              167.9569892473118,
+              87.2795698924731
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "vegetable oil",
+          "points": [
+            [
+              107.31182795698923,
+              0.6129032258064502
+            ],
+            [
+              149.247311827957,
+              88.35483870967741
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "cookbooks",
+          "points": [
+            [
+              322.3655913978494,
+              4.053763440860214
+            ],
+            [
+              355.05376344086017,
+              85.55913978494623
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "waldo",
+          "points": [
+            [
+              360.0,
+              53.73118279569891
+            ],
+            [
+              376.9892473118279,
+              77.38709677419354
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "dish soap",
+          "points": [
+            [
+              278.2795698924731,
+              125.12903225806451
+            ],
+            [
+              303.44086021505376,
+              178.03225806451613
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "sink",
+          "points": [
+            [
+              120.21505376344085,
+              165.34408602150538
+            ],
+            [
+              366.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "faucet",
+          "points": [
+            [
+              192.04301075268816,
+              166.63440860215053
+            ],
+            [
+              254.62365591397847,
+              191.5806451612903
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "copper-bottom pot",
+          "points": [
+            [
+              311.8279569892473,
+              125.98924731182794
+            ],
+            [
+              383.22580645161287,
+              174.59139784946234
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "utensils",
+          "points": [
+            [
+              345.8064516129032,
+              98.03225806451611
+            ],
+            [
+              394.62365591397844,
+              150.29032258064515
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "coffee grinder",
+          "points": [
+            [
+              392.47311827956986,
+              123.19354838709677
+            ],
+            [
+              422.1505376344086,
+              168.78494623655914
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "blue hydroflask",
+          "points": [
+            [
+              345.8064516129032,
+              165.1290322580645
+            ],
+            [
+              373.54838709677415,
+              207.70967741935482
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pepper mill",
+          "points": [
+            [
+              56.98924731182795,
+              34.16129032258064
+            ],
+            [
+              86.88172043010752,
+              75.88172043010752
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "paper towel roll",
+          "points": [
+            [
+              191.8279569892473,
+              92.87096774193547
+            ],
+            [
+              277.41935483870964,
+              122.11827956989245
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "scrub brush",
+          "points": [
+            [
+              159.13978494623655,
+              95.88172043010752
+            ],
+            [
+              184.3010752688172,
+              164.26881720430106
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "power outlet",
+          "points": [
+            [
+              107.74193548387096,
+              101.68817204301074
+            ],
+            [
+              136.34408602150538,
+              131.15053763440858
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "power outlet",
+          "points": [
+            [
+              436.7741935483871,
+              79.53763440860214
+            ],
+            [
+              452.258064516129,
+              105.77419354838709
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "cooking tongs",
+          "points": [
+            [
+              369.24731182795693,
+              105.55913978494623
+            ],
+            [
+              396.9892473118279,
+              148.13978494623655
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    }
+  ],
+  "imageHeight": 270,
+  "imageWidth": 480
+}

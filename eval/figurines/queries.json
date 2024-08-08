@@ -1,0 +1,1400 @@
+{
+  "version": "4.5.12",
+  "flags": {},
+  "keyframes": [
+    {
+      "shapes": [
+        {
+          "label": "jake",
+          "points": [
+            [
+              139.78494623655914,
+              124.26881720430106
+            ],
+            [
+              212.25806451612902,
+              213.51612903225805
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "miffy",
+          "points": [
+            [
+              335.05376344086017,
+              210.29032258064515
+            ],
+            [
+              362.3655913978494,
+              250.72043010752685
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rabbit",
+          "points": [
+            [
+              20.43010752688172,
+              169.64516129032256
+            ],
+            [
+              0.0,
+              121.68817204301075
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rabbit",
+          "points": [
+            [
+              334.83870967741933,
+              210.29032258064515
+            ],
+            [
+              362.79569892473114,
+              250.29032258064512
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "old camera",
+          "points": [
+            [
+              0.6451612903225806,
+              62.33333333333333
+            ],
+            [
+              122.36559139784946,
+              133.94623655913978
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy elephant",
+          "points": [
+            [
+              261.2903225806451,
+              143.83870967741933
+            ],
+            [
+              309.0322580645161,
+              218.6774193548387
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "twizzlers",
+          "points": [
+            [
+              320.64516129032256,
+              25.559139784946233
+            ],
+            [
+              464.30107526881716,
+              158.03225806451613
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "quilted pumpkin",
+          "points": [
+            [
+              84.3010752688172,
+              13.946236559139784
+            ],
+            [
+              155.48387096774192,
+              71.1505376344086
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "tesla door handle",
+          "points": [
+            [
+              167.9569892473118,
+              22.76344086021505
+            ],
+            [
+              261.72043010752685,
+              47.924731182795696
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "porcelain hand",
+          "points": [
+            [
+              181.0752688172043,
+              230.50537634408602
+            ],
+            [
+              233.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubics cube",
+          "points": [
+            [
+              279.7849462365591,
+              99.75268817204301
+            ],
+            [
+              330.5376344086021,
+              150.50537634408602
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubber duck",
+          "points": [
+            [
+              11.82795698924731,
+              261.68817204301075
+            ],
+            [
+              58.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubber duck",
+          "points": [
+            [
+              296.7741935483871,
+              81.68817204301075
+            ],
+            [
+              329.67741935483866,
+              120.8279569892473
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "ice cream cone",
+          "points": [
+            [
+              212.04301075268816,
+              63.838709677419345
+            ],
+            [
+              252.25806451612902,
+              102.76344086021504
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pink ice cream",
+          "points": [
+            [
+              239.99999999999997,
+              61.04301075268816
+            ],
+            [
+              263.6559139784946,
+              92.2258064516129
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy cat statue",
+          "points": [
+            [
+              65.59139784946235,
+              192.01075268817203
+            ],
+            [
+              124.73118279569891,
+              252.44086021505376
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy chair",
+          "points": [
+            [
+              196.34408602150535,
+              1.688172043010752
+            ],
+            [
+              319.5698924731183,
+              78.46236559139784
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "waldo",
+          "points": [
+            [
+              370.752688172043,
+              44.48387096774193
+            ],
+            [
+              392.6881720430107,
+              90.93548387096773
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spatula",
+          "points": [
+            [
+              221.0752688172043,
+              85.12903225806451
+            ],
+            [
+              291.18279569892474,
+              128.3548387096774
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pikachu",
+          "points": [
+            [
+              127.5268817204301,
+              78.46236559139784
+            ],
+            [
+              186.4516129032258,
+              147.70967741935482
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "red apple",
+          "points": [
+            [
+              163.87096774193546,
+              41.47311827956989
+            ],
+            [
+              121.50537634408602,
+              1.043010752688172
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "green apple",
+          "points": [
+            [
+              95.48387096774192,
+              195.88172043010752
+            ],
+            [
+              15.268817204301074,
+              131.36559139784944
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "jake",
+          "points": [
+            [
+              71.18279569892472,
+              58.24731182795698
+            ],
+            [
+              151.61290322580643,
+              134.16129032258064
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "miffy",
+          "points": [
+            [
+              17.419354838709676,
+              218.0322580645161
+            ],
+            [
+              57.204301075268816,
+              267.2795698924731
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rabbit",
+          "points": [
+            [
+              17.204301075268816,
+              217.81720430107526
+            ],
+            [
+              58.064516129032256,
+              267.494623655914
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rabbit",
+          "points": [
+            [
+              103.2258064516129,
+              13.946236559139784
+            ],
+            [
+              152.25806451612902,
+              44.26881720430107
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "old camera",
+          "points": [
+            [
+              153.33333333333331,
+              0.18279569892473013
+            ],
+            [
+              230.75268817204298,
+              64.48387096774194
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy elephant",
+          "points": [
+            [
+              47.526881720430104,
+              126.41935483870967
+            ],
+            [
+              119.78494623655914,
+              197.81720430107526
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "twizzlers",
+          "points": [
+            [
+              176.1290322580645,
+              142.9784946236559
+            ],
+            [
+              474.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "quilted pumpkin",
+          "points": [
+            [
+              232.9032258064516,
+              51.1505376344086
+            ],
+            [
+              296.0,
+              0.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "tesla door handle",
+          "points": [
+            [
+              315.4838709677419,
+              31.1505376344086
+            ],
+            [
+              437.63440860215053,
+              108.78494623655914
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "porcelain hand",
+          "points": [
+            [
+              42.58064516129032,
+              166.2043010752688
+            ],
+            [
+              0.2150537634408602,
+              125.34408602150538
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubics cube",
+          "points": [
+            [
+              169.46236559139783,
+              133.51612903225805
+            ],
+            [
+              239.99999999999997,
+              210.50537634408602
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubber duck",
+          "points": [
+            [
+              182.15053763440858,
+              117.17204301075267
+            ],
+            [
+              228.38709677419354,
+              167.2795698924731
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubber duck",
+          "points": [
+            [
+              43.01075268817204,
+              114.59139784946235
+            ],
+            [
+              0.2150537634408602,
+              65.12903225806451
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "ice cream cone",
+          "points": [
+            [
+              238.06451612903223,
+              89.43010752688171
+            ],
+            [
+              273.76344086021504,
+              124.48387096774192
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pink ice cream",
+          "points": [
+            [
+              270.5376344086021,
+              88.13978494623655
+            ],
+            [
+              298.92473118279565,
+              125.98924731182794
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy cat statue",
+          "points": [
+            [
+              52.90322580645161,
+              59.75268817204301
+            ],
+            [
+              94.19354838709677,
+              107.06451612903224
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy chair",
+          "points": [
+            [
+              285.1612903225806,
+              20.82795698924731
+            ],
+            [
+              456.5591397849462,
+              163.83870967741933
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "waldo",
+          "points": [
+            [
+              321.93548387096774,
+              172.87096774193546
+            ],
+            [
+              370.3225806451613,
+              247.2795698924731
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spatula",
+          "points": [
+            [
+              184.51612903225805,
+              100.39784946236558
+            ],
+            [
+              281.2903225806451,
+              148.78494623655914
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pikachu",
+          "points": [
+            [
+              146.4516129032258,
+              39.107526881720425
+            ],
+            [
+              203.6559139784946,
+              98.6774193548387
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "red apple",
+          "points": [
+            [
+              297.2043010752688,
+              0.18279569892473013
+            ],
+            [
+              348.17204301075265,
+              37.387096774193544
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "green apple",
+          "points": [
+            [
+              91.39784946236558,
+              30.72043010752688
+            ],
+            [
+              143.01075268817203,
+              72.01075268817203
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "jake",
+          "points": [
+            [
+              171.61290322580643,
+              52.87096774193548
+            ],
+            [
+              215.69892473118279,
+              101.9032258064516
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "miffy",
+          "points": [
+            [
+              119.35483870967741,
+              142.11827956989245
+            ],
+            [
+              135.0537634408602,
+              153.94623655913978
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rabbit",
+          "points": [
+            [
+              118.9247311827957,
+              141.4731182795699
+            ],
+            [
+              136.55913978494624,
+              154.59139784946234
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "old camera",
+          "points": [
+            [
+              329.0322580645161,
+              59.96774193548387
+            ],
+            [
+              260.8602150537634,
+              0.6129032258064502
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy elephant",
+          "points": [
+            [
+              137.63440860215053,
+              107.70967741935483
+            ],
+            [
+              170.32258064516128,
+              144.69892473118279
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "twizzlers",
+          "points": [
+            [
+              149.247311827957,
+              195.66666666666666
+            ],
+            [
+              250.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "quilted pumpkin",
+          "points": [
+            [
+              381.72043010752685,
+              93.51612903225805
+            ],
+            [
+              321.0752688172043,
+              30.935483870967737
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "tesla door handle",
+          "points": [
+            [
+              334.19354838709677,
+              202.11827956989245
+            ],
+            [
+              383.44086021505376,
+              106.84946236559139
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "porcelain hand",
+          "points": [
+            [
+              149.89247311827955,
+              92.01075268817203
+            ],
+            [
+              122.36559139784946,
+              64.48387096774194
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubics cube",
+          "points": [
+            [
+              182.5806451612903,
+              151.15053763440858
+            ],
+            [
+              215.48387096774192,
+              183.19354838709677
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubber duck",
+          "points": [
+            [
+              169.03225806451613,
+              25.129032258064512
+            ],
+            [
+              125.80645161290322,
+              0.18279569892473013
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubber duck",
+          "points": [
+            [
+              183.6559139784946,
+              158.03225806451613
+            ],
+            [
+              208.17204301075267,
+              182.76344086021504
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "ice cream cone",
+          "points": [
+            [
+              253.11827956989245,
+              122.11827956989245
+            ],
+            [
+              282.5806451612903,
+              153.94623655913978
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pink ice cream",
+          "points": [
+            [
+              256.9892473118279,
+              148.3548387096774
+            ],
+            [
+              280.0,
+              167.92473118279568
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy cat statue",
+          "points": [
+            [
+              172.25806451612902,
+              16.956989247311824
+            ],
+            [
+              198.49462365591395,
+              48.784946236559136
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy chair",
+          "points": [
+            [
+              284.7311827956989,
+              118.89247311827955
+            ],
+            [
+              344.30107526881716,
+              175.23655913978493
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy chair",
+          "points": [
+            [
+              273.54838709677415,
+              185.77419354838707
+            ],
+            [
+              333.54838709677415,
+              247.06451612903226
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "waldo",
+          "points": [
+            [
+              198.49462365591395,
+              232.6559139784946
+            ],
+            [
+              215.0537634408602,
+              249.8602150537634
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spatula",
+          "points": [
+            [
+              217.41935483870967,
+              113.08602150537634
+            ],
+            [
+              257.63440860215053,
+              184.26881720430106
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pikachu",
+          "points": [
+            [
+              228.17204301075267,
+              52.65591397849462
+            ],
+            [
+              254.4086021505376,
+              98.89247311827957
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "red apple",
+          "points": [
+            [
+              380.43010752688167,
+              63.19354838709677
+            ],
+            [
+              424.9462365591398,
+              109.86021505376343
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "green apple",
+          "points": [
+            [
+              246.4516129032258,
+              33.946236559139784
+            ],
+            [
+              202,
+              0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "jake",
+          "points": [
+            [
+              236.98924731182794,
+              101.25806451612902
+            ],
+            [
+              268.38709677419354,
+              54.16129032258064
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "miffy",
+          "points": [
+            [
+              183.2258064516129,
+              60.82795698924731
+            ],
+            [
+              195.69892473118279,
+              80.39784946236558
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rabbit",
+          "points": [
+            [
+              357.84946236559136,
+              79.32258064516128
+            ],
+            [
+              417.84946236559136,
+              120.39784946236557
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rabbit",
+          "points": [
+            [
+              183.01075268817203,
+              58.89247311827957
+            ],
+            [
+              197.41935483870967,
+              81.9032258064516
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "old camera",
+          "points": [
+            [
+              273.9784946236559,
+              60.18279569892472
+            ],
+            [
+              433.9784946236559,
+              171.5806451612903
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy elephant",
+          "points": [
+            [
+              192.68817204301075,
+              53.516129032258064
+            ],
+            [
+              221.0752688172043,
+              81.68817204301075
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "twizzlers",
+          "points": [
+            [
+              49.03225806451613,
+              59.96774193548387
+            ],
+            [
+              147.52688172043008,
+              124.26881720430106
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "quilted pumpkin",
+          "points": [
+            [
+              290.1075268817204,
+              113.73118279569891
+            ],
+            [
+              380.8602150537634,
+              195.66666666666666
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "tesla door handle",
+          "points": [
+            [
+              101.72043010752688,
+              166.63440860215053
+            ],
+            [
+              269.4623655913978,
+              222.33333333333331
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "porcelain hand",
+          "points": [
+            [
+              233.9784946236559,
+              60.61290322580645
+            ],
+            [
+              246.4516129032258,
+              76.31182795698923
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubics cube",
+          "points": [
+            [
+              156.77419354838707,
+              70.72043010752688
+            ],
+            [
+              190.32258064516128,
+              104.91397849462365
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubber duck",
+          "points": [
+            [
+              155.69892473118279,
+              55.45161290322581
+            ],
+            [
+              180.21505376344084,
+              79.96774193548386
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "rubber duck",
+          "points": [
+            [
+              290.96774193548384,
+              51.58064516129032
+            ],
+            [
+              319.5698924731183,
+              83.19354838709677
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "ice cream cone",
+          "points": [
+            [
+              187.31182795698922,
+              106.63440860215053
+            ],
+            [
+              225.16129032258064,
+              130.29032258064515
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "pink ice cream",
+          "points": [
+            [
+              171.8279569892473,
+              107.06451612903224
+            ],
+            [
+              188.6021505376344,
+              121.04301075268816
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "toy chair",
+          "points": [
+            [
+              59.99999999999999,
+              91.79569892473117
+            ],
+            [
+              226.66666666666666,
+              165.98924731182794
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "waldo",
+          "points": [
+            [
+              89.6774193548387,
+              57.817204301075265
+            ],
+            [
+              107.95698924731182,
+              86.84946236559139
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spatula",
+          "points": [
+            [
+              224.7311827956989,
+              91.58064516129032
+            ],
+            [
+              152.68817204301075,
+              127.49462365591395
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "red apple",
+          "points": [
+            [
+              283.01075268817203,
+              178.46236559139783
+            ],
+            [
+              372.68817204301075,
+              264.26881720430106
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "green apple",
+          "points": [
+            [
+              304.9462365591398,
+              67.9247311827957
+            ],
+            [
+              342.5806451612903,
+              96.95698924731182
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    }
+  ],
+  "imageHeight": 270,
+  "imageWidth": 480
+}

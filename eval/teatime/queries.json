@@ -1,0 +1,532 @@
+{
+  "version": "4.5.12",
+  "flags": {},
+  "keyframes": [
+    {
+      "shapes": [
+        {
+          "label": "stuffed bear",
+          "points": [
+            [
+              264.9462365591398,
+              0.18279569892473013
+            ],
+            [
+              469.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "sheep",
+          "points": [
+            [
+              1.075268817204301,
+              268.5698924731183
+            ],
+            [
+              187.31182795698922,
+              90.07526881720429
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "bear nose",
+          "points": [
+            [
+              330.5376344086021,
+              25.774193548387096
+            ],
+            [
+              386.2365591397849,
+              79.75268817204301
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "coffee mug",
+          "points": [
+            [
+              279.5698924731183,
+              114.59139784946235
+            ],
+            [
+              309.67741935483866,
+              149.64516129032256
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spill",
+          "points": [
+            [
+              253.54838709677418,
+              145.98924731182794
+            ],
+            [
+              296.34408602150535,
+              172.87096774193546
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "tea in a glass",
+          "points": [
+            [
+              173.9784946236559,
+              155.02150537634407
+            ],
+            [
+              209.89247311827955,
+              195.4516129032258
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "cookies on a plate",
+          "points": [
+            [
+              210.10752688172042,
+              132.44086021505376
+            ],
+            [
+              241.72043010752685,
+              155.66666666666666
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "hooves",
+          "points": [
+            [
+              116.98924731182795,
+              157.6021505376344
+            ],
+            [
+              187.09677419354838,
+              227.92473118279568
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "coffee",
+          "points": [
+            [
+              279.7849462365591,
+              114.16129032258064
+            ],
+            [
+              309.247311827957,
+              149.21505376344084
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spoon handle",
+          "points": [
+            [
+              285.80645161290323,
+              108.13978494623655
+            ],
+            [
+              294.4086021505376,
+              126.84946236559139
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "paper napkin",
+          "points": [
+            [
+              287.31182795698925,
+              168.13978494623655
+            ],
+            [
+              333.3333333333333,
+              216.31182795698922
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "plate",
+          "points": [
+            [
+              198.49462365591395,
+              122.76344086021504
+            ],
+            [
+              253.76344086021504,
+              165.34408602150538
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "bag of cookies",
+          "points": [
+            [
+              211.1827956989247,
+              85.34408602150538
+            ],
+            [
+              241.50537634408602,
+              130.93548387096774
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "stuffed bear",
+          "points": [
+            [
+              340.0,
+              17.817204301075268
+            ],
+            [
+              478.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "sheep",
+          "points": [
+            [
+              110.75268817204301,
+              83.19354838709677
+            ],
+            [
+              0.4301075268817204,
+              249.8602150537634
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "coffee mug",
+          "points": [
+            [
+              335.9139784946236,
+              102.11827956989247
+            ],
+            [
+              394.83870967741933,
+              173.3010752688172
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spill",
+          "points": [
+            [
+              260.4301075268817,
+              153.51612903225805
+            ],
+            [
+              346.8817204301075,
+              219.75268817204298
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "tea in a glass",
+          "points": [
+            [
+              68.81720430107526,
+              129.64516129032256
+            ],
+            [
+              140.21505376344086,
+              196.74193548387095
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "cookies on a plate",
+          "points": [
+            [
+              194.19354838709677,
+              141.68817204301075
+            ],
+            [
+              254.83870967741933,
+              98.6774193548387
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "hooves",
+          "points": [
+            [
+              0.0,
+              93.94623655913978
+            ],
+            [
+              108.6021505376344,
+              249.43010752688173
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "coffee",
+          "points": [
+            [
+              299.13978494623655,
+              219.75268817204298
+            ],
+            [
+              394.4086021505376,
+              102.11827956989247
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "spoon handle",
+          "points": [
+            [
+              359.3548387096774,
+              88.35483870967741
+            ],
+            [
+              378.06451612903226,
+              122.76344086021504
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "paper napkin",
+          "points": [
+            [
+              281.93548387096774,
+              223.4086021505376
+            ],
+            [
+              377.0,
+              269.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "plate",
+          "points": [
+            [
+              177.41935483870967,
+              85.12903225806451
+            ],
+            [
+              273.54838709677415,
+              157.17204301075267
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "bag of cookies",
+          "points": [
+            [
+              228.6021505376344,
+              7.494623655913976
+            ],
+            [
+              290.1075268817204,
+              90.07526881720429
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    },
+    {
+      "shapes": [
+        {
+          "label": "sheep",
+          "points": [
+            [
+              223.2258064516129,
+              210.72043010752685
+            ],
+            [
+              359.13978494623655,
+              12.44086021505376
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "tea in a glass",
+          "points": [
+            [
+              329.67741935483866,
+              164.91397849462365
+            ],
+            [
+              371.8279569892473,
+              216.9569892473118
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "cookies on a plate",
+          "points": [
+            [
+              420.1138211382114,
+              209.26558265582656
+            ],
+            [
+              479.0,
+              256.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "dall-e",
+          "points": [
+            [
+              270.520325203252,
+              93.27642276422765
+            ],
+            [
+              300.05962059620595,
+              117.93766937669378
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "hooves",
+          "points": [
+            [
+              247.7560975609756,
+              110.07859078590786
+            ],
+            [
+              358.5962059620596,
+              211.70460704607046
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "yellow pouf",
+          "points": [
+            [
+              98.43360433604337,
+              63.19512195121952
+            ],
+            [
+              174.04336043360433,
+              124.17073170731709
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        },
+        {
+          "label": "plate",
+          "points": [
+            [
+              401.95663956639567,
+              184.06233062330622
+            ],
+            [
+              478,
+              269
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ]
+    }
+  ],
+  "imageHeight": 270,
+  "imageWidth": 480
+}
