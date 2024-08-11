@@ -54,7 +54,7 @@ class LERFDataManagerConfig(VanillaDataManagerConfig):
     percent_depth_rays: float = 0.25
     compute_other_losses_for_depth_rays: bool = False
     generate_depth_rays: bool = True
-    generate_sam_masks: bool = True
+    generate_sam_features: bool = True
     use_dinov2: bool = True
 
 
@@ -130,7 +130,7 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
                 cache_path=colmap_cache_path,
             )
 
-        if config.generate_sam_masks:
+        if config.generate_sam_features:
             sam_cache_path = Path(osp.join(cache_dir, "sam.npy"))
 
             # Load SAM data
@@ -199,7 +199,9 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
             batch["image"] = torch.cat((batch["image"],colmap_rgb.to(batch["image"])),dim=0)
             batch["clip"], clip_scale = self.clip_interpolator(ray_indices_sum)
             batch["dino"] = self.dino_dataloader(ray_indices_sum)
-            batch["sam"] = self.sam_loader(ray_indices)
+            
+            if self.config.generate_sam_features:
+                batch["sam"] = self.sam_loader(ray_indices_sum)
         else:
             batch["clip"], clip_scale = self.clip_interpolator(ray_indices)
             
@@ -209,9 +211,8 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
 
             batch["dino"] = self.dino_dataloader(ray_indices)
 
-        if self.config.generate_sam_masks:
-            batch["sam"] = self.sam_loader(ray_indices)
-
+            if self.config.generate_sam_features:
+                batch["sam"] = self.sam_loader(ray_indices)
 
         ray_bundle.metadata["clip_scales"] = clip_scale
         # assume all cameras have the same focal length and image width

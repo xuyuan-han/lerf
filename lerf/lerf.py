@@ -43,7 +43,7 @@ class LERFModelConfig(NerfactoModelConfig):
     compute_other_losses_for_depth_rays: bool = False
     generate_depth_rays: bool = True
     learnable_depth_scale: bool = False
-    sam_masks: bool = True
+    sam_features: bool = True
 
 
 class LERFModel(NerfactoModel):
@@ -139,7 +139,7 @@ class LERFModel(NerfactoModel):
         outputs["dino"] = self.renderer_mean(
             embeds=lerf_field_outputs[LERFFieldHeadNames.DINO], weights=lerf_weights.detach()
         )
-        if self.config.sam_masks:
+        if self.config.sam_features:
           outputs["sam"] = self.renderer_mean(embeds=lerf_field_outputs[LERFFieldHeadNames.SAM],
                                           weights=lerf_weights.detach())
 
@@ -181,7 +181,7 @@ class LERFModel(NerfactoModel):
                     outputs[f"prop_depth_{i}"] = outputs[f"prop_depth_{i}"][:depth_start_index]
                 outputs["clip"] = outputs["clip"][:depth_start_index]
                 outputs["dino"] = outputs["dino"][:depth_start_index]
-                if self.config.sam_masks:
+                if self.config.sam_features:
                     outputs["sam"] = outputs["sam"][:depth_start_index]
 
         return outputs
@@ -317,7 +317,7 @@ class LERFModel(NerfactoModel):
                     loss_dict["depth_loss_mse"] =  1e-2 * torch.mean(((outputs["expected_depth_d"] - termination_depth) ** 2) * sigma)
                 """
 
-            if self.config.sam_masks:
+            if self.config.sam_features:
               unreduced_sam = torch.nn.functional.mse_loss(outputs["sam"], batch["sam"], reduction="none")
               loss_dict["sam_loss"] = unreduced_sam.mean(dim=-1).nanmean()
 
