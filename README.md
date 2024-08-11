@@ -49,7 +49,8 @@ The images below show the rgb, raw, centered, and normalized output views for th
 </div>
 
 ## Computing Localization Accuracy
-We provide our own script for computing the localization accuracy like it is described in the paper. This is, however, only possible on the original LeRF scenes `bouquet`, `figurines`, `ramen`, `teatime`, and `waldo_kitchen` since we adapted their already available evaluation data.
+We provide our own script for computing the localization accuracy that is described in the paper. This is, however, only possible on the original LeRF scenes `bouquet`, `figurines`, `ramen`, `teatime`, and `waldo_kitchen` since we adapted their already available evaluation data.
+Because the LeRF scenes contain no COLMAP data, the data parser of the respective configuration has to be changed from the Colmap data parser to the Nerfstudio data parser in the lerf_config.py file prior to running evaluation.
 
 The localization accuracy can be computed by running `python eval_location.py --load-config <config> --camera-path-filename eval\<scene_name>\keyframes.json --query_path_filename eval\<scene_name>\queries.json`, where `config` is a path to the config file of the run on the respective scene that is to be evaluated.
 
