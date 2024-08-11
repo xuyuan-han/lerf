@@ -133,9 +133,10 @@ class LERFModel(NerfactoModel):
         outputs["clip"] = self.renderer_clip(
             embeds=lerf_field_outputs[LERFFieldHeadNames.CLIP], weights=lerf_weights.detach()
         )
-        outputs["dino"] = self.renderer_mean(
-            embeds=lerf_field_outputs[LERFFieldHeadNames.DINO], weights=lerf_weights.detach()
-        )
+
+        #outputs["dino"] = self.renderer_mean(
+        #    embeds=lerf_field_outputs[LERFFieldHeadNames.DINO], weights=lerf_weights.detach()
+        #)
         if self.config.sam_masks:
           outputs["sam"] = self.renderer_mean(embeds=lerf_field_outputs[LERFFieldHeadNames.SAM],
                                           weights=lerf_weights.detach())
@@ -258,8 +259,8 @@ class LERFModel(NerfactoModel):
                 outputs["clip"], batch["clip"], delta=1.25, reduction="none"
             )
             loss_dict["clip_loss"] = unreduced_clip.sum(dim=-1).nanmean()
-            unreduced_dino = torch.nn.functional.mse_loss(outputs["dino"], batch["dino"], reduction="none")
-            loss_dict["dino_loss"] = unreduced_dino.sum(dim=-1).nanmean()
+            #unreduced_dino = torch.nn.functional.mse_loss(outputs["dino"], batch["dino"], reduction="none")
+            #loss_dict["dino_loss"] = unreduced_dino.sum(dim=-1).nanmean()
             if self.config.sam_masks:
               unreduced_sam = torch.nn.functional.mse_loss(outputs["sam"], batch["sam"], reduction="none")
               loss_dict["sam_loss"] = unreduced_sam.mean(dim=-1).nanmean()

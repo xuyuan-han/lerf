@@ -140,7 +140,8 @@ lerf_method_lite = MethodSpecification(
         mixed_precision=True,
         pipeline=LERFPipelineConfig(
             datamanager=LERFDataManagerConfig(
-                dataparser=NerfstudioDataParserConfig(train_split_fraction=0.99), #ScanNetppDataParserConfig(), TODO: Write own scannetpp dataparser that supports downsampling and setting train_split_fraction
+                dataparser=ColmapDataParserConfig(train_split_fraction=0.99, max_2D_matches_per_3D_point=0,
+                                                  eval_mode="fraction"), #ScanNetppDataParserConfig(), TODO: Write own scannetpp dataparser that supports downsampling and setting train_split_fraction
                 train_num_rays_per_batch= 4096,  #4096,
                 eval_num_rays_per_batch= 4096,         #4096,
                 generate_depth_rays = False,
@@ -152,7 +153,7 @@ lerf_method_lite = MethodSpecification(
                 hashgrid_layers=(16,),
                 hashgrid_resolutions=((16, 512),),
                 num_lerf_samples=12,
-                sam_masks=False
+                sam_masks=True
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512
@@ -199,7 +200,8 @@ lerf_method_depth = MethodSpecification(
                 eval_num_rays_per_batch=4096,
                 #generate_depth_rays = False,
                 #compute_other_losses_for_depth_rays=True, #TODO: currently generated radiance field gets negatively impacted when computing other losses for colmap rays. Semantic predictions seem unaffected.
-                generate_sam_masks = False
+                generate_sam_masks=False,
+                use_dinov2=False
             ),
             model=LERFModelConfig(
                 eval_num_rays_per_chunk=1 << 15,
@@ -237,4 +239,116 @@ lerf_method_depth = MethodSpecification(
         vis="viewer",
     ),
     description="A depth version of LERF designed to work on smaller GPUs",
+)
+
+
+lerf_method_sam = MethodSpecification(
+    config=TrainerConfig(
+        method_name="lerf-sam",
+        steps_per_eval_batch=500,
+        steps_per_save=2000,
+        max_num_iterations=30000,
+        mixed_precision=True,
+        pipeline=LERFPipelineConfig(
+            datamanager=LERFDataManagerConfig(
+                dataparser=ColmapDataParserConfig(train_split_fraction=0.99, max_2D_matches_per_3D_point=0,
+                                                  eval_mode="fraction"), #ScanNetppDataParserConfig(), TODO: Write own scannetpp dataparser that supports downsampling and setting train_split_fraction
+                train_num_rays_per_batch= 4096,  #4096,
+                eval_num_rays_per_batch= 4096,         #4096,
+                generate_depth_rays = False,
+                generate_sam_masks=True,
+                use_dinov2=False
+
+            ),
+            model=LERFModelConfig(
+                eval_num_rays_per_chunk=1 << 15,
+                hashgrid_sizes=(19,),
+                hashgrid_layers=(16,),
+                hashgrid_resolutions=((16, 512),),
+                num_lerf_samples=12,
+                sam_masks=True
+            ),
+            network=OpenCLIPNetworkConfig(
+                clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512
+            ),
+        ),
+        optimizers={
+            "proposal_networks": {
+                "optimizer": AdamOptimizerConfig(lr=1e-2, eps=1e-15),
+                "scheduler": None,
+            },
+            "fields": {
+                "optimizer": RAdamOptimizerConfig(lr=1e-2, eps=1e-15),
+                "scheduler": ExponentialDecaySchedulerConfig(lr_final=1e-3, max_steps=30000),
+            },
+            "lerf": {
+                "optimizer": RAdamOptimizerConfig(lr=1e-2, eps=1e-15, weight_decay=1e-9),
+                "scheduler": ExponentialDecaySchedulerConfig(lr_final=1e-3, max_steps=7000),
+            },
+            "camera_opt": {
+                "optimizer": AdamOptimizerConfig(lr=1e-3, eps=1e-15),
+                "scheduler": ExponentialDecaySchedulerConfig(
+                    lr_final=1e-4, max_steps=5000
+                ),
+            },
+        },
+        viewer=ViewerConfig(num_rays_per_chunk=1 << 15),
+        vis="viewer",
+    ),
+    description="A lightweight version of LERF designed to work on smaller GPUs by using SAM masks",
+)
+
+lerf_method_dino = MethodSpecification(
+    config=TrainerConfig(
+        method_name="lerf-dino",
+        steps_per_eval_batch=500,
+        steps_per_save=2000,
+        max_num_iterations=30000,
+        mixed_precision=True,
+        pipeline=LERFPipelineConfig(
+            datamanager=LERFDataManagerConfig(
+                dataparser=ColmapDataParserConfig(train_split_fraction=0.99, max_2D_matches_per_3D_point=0,
+                                                  eval_mode="fraction"), #ScanNetppDataParserConfig(), TODO: Write own scannetpp dataparser that supports downsampling and setting train_split_fraction
+                train_num_rays_per_batch= 4096,  #4096,
+                eval_num_rays_per_batch= 4096,         #4096,
+                generate_depth_rays = False,
+                generate_sam_masks=False,
+                use_dinov2= True
+            ),
+            model=LERFModelConfig(
+                eval_num_rays_per_chunk=1 << 15,
+                hashgrid_sizes=(19,),
+                hashgrid_layers=(16,),
+                hashgrid_resolutions=((16, 512),),
+                num_lerf_samples=12,
+                sam_masks=False
+            ),
+            network=OpenCLIPNetworkConfig(
+                clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512
+            ),
+        ),
+        optimizers={
+            "proposal_networks": {
+                "optimizer": AdamOptimizerConfig(lr=1e-2, eps=1e-15),
+                "scheduler": None,
+            },
+            "fields": {
+                "optimizer": RAdamOptimizerConfig(lr=1e-2, eps=1e-15),
+                "scheduler": ExponentialDecaySchedulerConfig(lr_final=1e-3, max_steps=30000),
+            },
+            "lerf": {
+                "optimizer": RAdamOptimizerConfig(lr=1e-2, eps=1e-15, weight_decay=1e-9),
+                "scheduler": ExponentialDecaySchedulerConfig(lr_final=1e-3, max_steps=7000),
+            },
+            "camera_opt": {
+                "optimizer": AdamOptimizerConfig(lr=1e-3, eps=1e-15),
+                "scheduler": ExponentialDecaySchedulerConfig(
+                    lr_final=1e-4, max_steps=5000
+                ),
+            },
+        },
+        viewer=ViewerConfig(num_rays_per_chunk=1 << 15),
+        vis="viewer",
+    ),
+    description="A lightweight version of LERF designed to work on smaller GPUs by leveraging DINOv2",
 )

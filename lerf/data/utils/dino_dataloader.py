@@ -25,9 +25,11 @@ class DinoDataloader(FeatureDataloader):
         cfg: dict,
         device: torch.device,
         image_list: torch.Tensor,
+        dino_model= False,
         cache_path: str = None,
     ):
         assert "image_shape" in cfg
+        self.dino_type = dino_model
         super().__init__(cfg, device, image_list, cache_path)
         # Do distillation-preprocessing as noted in N3F:
         # The features are then L2-normalized and reduced with PCA to 64 dimensions before distillation.
@@ -37,14 +39,16 @@ class DinoDataloader(FeatureDataloader):
         self.data = torch.pca_lowrank(self.data.reshape(-1, data_shape[-1]), q=64)[0].reshape((*data_shape[:-1], 64))
 
     def create(self, image_list):
-        if self.dino_type == "dino":
-            self.dino_model_type = "dino_vits8"
-            self.dino_stride = 8
-            print("Using DINO")
-        else:
+        if self.dino_type:
             self.dino_model_type = "dinov2_vitb14"
             self.dino_stride = 14
             print("Using DINOv2")
+
+        else:
+            self.dino_model_type = "dino_vits8"
+            self.dino_stride = 8
+            print("Using DINO")
+
 
 
         extractor = ViTExtractor(self.dino_model_type, self.dino_stride)

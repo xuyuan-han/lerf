@@ -55,6 +55,7 @@ class LERFDataManagerConfig(VanillaDataManagerConfig):
     compute_other_losses_for_depth_rays: bool = False
     generate_depth_rays: bool = True
     generate_sam_masks: bool = True
+    use_dinov2: bool = True
 
 
 class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
@@ -83,14 +84,9 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
     ):
 
         #calculate number of depth rays to sample based on input training rays and adapt config for datamanager accordingly
-        if config.generate_depth_rays:
-            self.num_depth_rays_per_batch = int(config.percent_depth_rays * config.train_num_rays_per_batch)
-            config.train_num_rays_per_batch = config.train_num_rays_per_batch - self.num_depth_rays_per_batch
-
-            #adapt folders if using scannetpp
-            if not (config.data / "colmap" / "sparse" / "0").exists():
-                config.dataparser.colmap_path = Path("dslr/colmap")
-                config.dataparser.images_path = Path("dslr/resized_images")
+        if not (config.data / "colmap" / "sparse" / "0").exists():
+            config.dataparser.colmap_path = Path("dslr/colmap")
+            config.dataparser.images_path = Path("dslr/resized_images")
 
         super().__init__(
             config=config, device=device, test_mode=test_mode, world_size=world_size, local_rank=local_rank, **kwargs
@@ -142,22 +138,26 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
                     for name in self.train_dataparser_outputs.image_filenames
             ]
 
+            #print(sam_feature_filenames)
+
             # Load SAM data
             self.sam_loader = SAMDataloader(
                 device=self.device,
-                image_paths=Path(self.config.dataparser.data /"images" ),
+                image_paths=Path(self.config.dataparser.data /"dslr" /"resized_images" ),
                 npy_paths=sam_feature_filenames,
-                npy_directory=Path(self.config.dataparser.data /"sam_features"),
+                npy_directory=Path(self.config.dataparser.data /"dslr" /"sam_features"),
                 image_shape= list(images.shape[2:4]),
             )
 
-
         self.dino_dataloader = DinoDataloader(
             image_list=images,
+            dino_model=config.use_dinov2,
             device=self.device,
             cfg={"image_shape": list(images.shape[2:4])},
             cache_path=dino_cache_path,
         )
+
+
         torch.cuda.empty_cache()
         self.clip_interpolator = PyramidEmbeddingDataloader(
             image_list=images,
