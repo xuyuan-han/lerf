@@ -22,6 +22,10 @@ from lerf.encoders.image_encoder import BaseImageEncoder
 from lerf.lerf_field import LERFField
 from lerf.lerf_fieldheadnames import LERFFieldHeadNames
 from lerf.lerf_renderers import CLIPRenderer, MeanRenderer
+from lerf.segment_anything import sam_model_registry, SamPredictor
+from lerf.sam_utils import generate_masked_img, get_feature_size
+import torch.nn as nn
+import time
 
 
 
@@ -39,6 +43,10 @@ class LERFModelConfig(NerfactoModelConfig):
     compute_other_losses_for_depth_rays: bool = False
     generate_depth_rays: bool = True
     learnable_depth_scale: bool = False
+    sam_checkpoint: str = "lerf\segment_anything\sam_vit_h_4b8939.pth"
+    sharpening_temperature: float = 10.0
+    dino_model: str = "dino_vits8"
+    sam_masks: bool = True
 
 
 class LERFModel(NerfactoModel):
@@ -130,9 +138,14 @@ class LERFModel(NerfactoModel):
         outputs["clip"] = self.renderer_clip(
             embeds=lerf_field_outputs[LERFFieldHeadNames.CLIP], weights=lerf_weights.detach()
         )
+        
         outputs["dino"] = self.renderer_mean(
             embeds=lerf_field_outputs[LERFFieldHeadNames.DINO], weights=lerf_weights.detach()
         )
+        if self.config.sam_masks:
+          outputs["sam"] = self.renderer_mean(embeds=lerf_field_outputs[LERFFieldHeadNames.SAM],
+                                          weights=lerf_weights.detach())
+
 
         if not self.training:
             with torch.no_grad():
@@ -171,11 +184,12 @@ class LERFModel(NerfactoModel):
                     outputs[f"prop_depth_{i}"] = outputs[f"prop_depth_{i}"][:depth_start_index]
                 outputs["clip"] = outputs["clip"][:depth_start_index]
                 outputs["dino"] = outputs["dino"][:depth_start_index]
+                outputs["sam"] = outputs["sam"][:depth_start_index]
 
         return outputs
 
     @torch.no_grad()
-    def get_outputs_for_camera_ray_bundle(self, camera_ray_bundle: RayBundle) -> Dict[str, torch.Tensor]:
+    def get_outputs_for_camera_ray_bundle(self, camera_ray_bundle: RayBundle, intrin= None, c2w=None, points=None) -> Dict[str, torch.Tensor]:
         """Takes in camera parameters and computes the output of the model.
 
         LERF overrides this from base_model since we need to compute the max_across relevancy in multiple batches,
@@ -224,12 +238,16 @@ class LERFModel(NerfactoModel):
             if not torch.is_tensor(outputs_list[0]):
                 # TODO: handle lists of tensors as well
                 continue
+
             outputs[output_name] = torch.cat(outputs_list).view(image_height, image_width, -1)  # type: ignore
+
         for i in range(len(self.image_encoder.positives)):
             p_i = torch.clip(outputs[f"relevancy_{i}"] - 0.5, 0, 1)
             outputs[f"composited_{i}"] = apply_colormap(p_i / (p_i.max() + 1e-6), ColormapOptions("turbo"))
             mask = (outputs["relevancy_0"] < 0.5).squeeze()
             outputs[f"composited_{i}"][mask, :] = outputs["rgb"][mask, :]
+
+
         return outputs
 
     def _get_outputs_nerfacto(self, ray_samples: RaySamples):
@@ -300,6 +318,12 @@ class LERFModel(NerfactoModel):
                 else:
                     loss_dict["depth_loss_mse"] =  1e-2 * torch.mean(((outputs["expected_depth_d"] - termination_depth) ** 2) * sigma)
                 """
+
+            #unreduced_dino = torch.nn.functional.mse_loss(outputs["dino"], batch["dino"], reduction="none")
+            #loss_dict["dino_loss"] = unreduced_dino.sum(dim=-1).nanmean()
+            if self.config.sam_masks:
+              unreduced_sam = torch.nn.functional.mse_loss(outputs["sam"], batch["sam"], reduction="none")
+              loss_dict["sam_loss"] = unreduced_sam.mean(dim=-1).nanmean()
 
         return loss_dict
 

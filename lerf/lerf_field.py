@@ -51,6 +51,22 @@ class LERFField(Field):
         )
         tot_out_dims = sum([e.n_output_dims for e in self.clip_encs])
 
+
+
+        #SAM NET INITIALIZATION
+        self.sam_net = tcnn.Network(
+            n_input_dims=tot_out_dims,
+            n_output_dims=256,
+            network_config={
+                "otype": "CutlassMLP",
+                "activation": "ReLU",
+                "output_activation": "None",
+                "n_neurons": 256,
+                "n_hidden_layers": 2 #hidden_layers,
+            },
+        )
+
+
         self.clip_net = tcnn.Network(
             n_input_dims=tot_out_dims + 1,
             n_output_dims=clip_n_dims,
@@ -65,7 +81,8 @@ class LERFField(Field):
 
         self.dino_net = tcnn.Network(
             n_input_dims=tot_out_dims,
-            n_output_dims=384,
+            #n_output_dims=384,
+            n_output_dims=64,
             network_config={
                 "otype": "CutlassMLP",
                 "activation": "ReLU",
@@ -110,8 +127,14 @@ class LERFField(Field):
         dino_pass = self.dino_net(x).view(*ray_samples.frustums.shape, -1)
         outputs[LERFFieldHeadNames.DINO] = dino_pass
 
+        #SAM PASS
+        sam_pass = self.sam_net(x).view(*ray_samples.frustums.shape, -1)
+        outputs[LERFFieldHeadNames.SAM] = sam_pass
+
         return outputs
 
+
+#???????
     def get_output_from_hashgrid(self, ray_samples: RaySamples, hashgrid_field, scale):
         # designated scales, run outputs for each scale
         hashgrid_field = hashgrid_field.view(-1, self.clip_net.n_input_dims - 1)

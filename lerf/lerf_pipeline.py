@@ -71,7 +71,6 @@ class LERFPipeline(VanillaPipeline):
             grad_scaler=grad_scaler,
         )
         self.model.to(device)
-
         self.world_size = world_size
         if world_size > 1:
             self._model = typing.cast(LERFModel, DDP(self._model, device_ids=[local_rank], find_unused_parameters=True))

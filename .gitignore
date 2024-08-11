@@ -190,3 +190,5 @@ camera_paths/
 */**/.DS_Store
 */**/._.DS_Store
 
+#sam model
+lerf/segment_anything/sam_vit_h_4b8939.pth

@@ -6,3 +6,4 @@ class LERFFieldHeadNames(Enum):
     HASHGRID = "hashgrid"
     CLIP = "clip"
     DINO = "dino"
+    SAM = "sam" # Segmental Attention Module
