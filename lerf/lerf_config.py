@@ -31,7 +31,7 @@ lerf_method_lite = MethodSpecification(
         mixed_precision=True,
         pipeline=LERFPipelineConfig(
             datamanager=LERFDataManagerConfig(
-                dataparser=ColmapDataParserConfig(train_split_fraction=0.99,max_2D_matches_per_3D_point=0,eval_mode="fraction"), #NerfstudioDataParserConfig(train_split_fraction=0.99), #
+                dataparser=ColmapDataParserConfig(train_split_fraction=0.99,max_2D_matches_per_3D_point=0,eval_mode="fraction"), #NerfstudioDataParserConfig(train_split_fraction=0.99),
                 train_num_rays_per_batch=4096,
                 eval_num_rays_per_batch=4096,
                 generate_depth_rays = False,
@@ -151,7 +151,7 @@ lerf_method_sam = MethodSpecification(
         mixed_precision=True,
         pipeline=LERFPipelineConfig(
             datamanager=LERFDataManagerConfig(
-                dataparser=ColmapDataParserConfig(train_split_fraction=0.99, max_2D_matches_per_3D_point=0,eval_mode="fraction"),
+                dataparser=ColmapDataParserConfig(train_split_fraction=0.99, max_2D_matches_per_3D_point=0,eval_mode="fraction"), #NerfstudioDataParserConfig(train_split_fraction=0.99),
                 train_num_rays_per_batch= 4096,  #4096,
                 eval_num_rays_per_batch= 4096,         #4096,
                 generate_depth_rays = False,
@@ -207,7 +207,7 @@ lerf_method_dino = MethodSpecification(
         mixed_precision=True,
         pipeline=LERFPipelineConfig(
             datamanager=LERFDataManagerConfig(
-                dataparser=ColmapDataParserConfig(train_split_fraction=0.99, max_2D_matches_per_3D_point=0, eval_mode="fraction"),
+                dataparser=ColmapDataParserConfig(train_split_fraction=0.99, max_2D_matches_per_3D_point=0, eval_mode="fraction"), #NerfstudioDataParserConfig(train_split_fraction=0.99),
                 train_num_rays_per_batch= 4096,  #4096,
                 eval_num_rays_per_batch= 4096,         #4096,
                 generate_depth_rays = False,
