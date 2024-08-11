@@ -62,7 +62,7 @@ Our work is based on the LeRF paper:
 &nbsp;booktitle = {International Conference on Computer Vision (ICCV)},
 &nbsp;year = {2023},
 } </pre>
-Our modification build upon previous work from DS-NeRF, DINO, DINOv2, and SAM:
+Our modifications build upon previous work from DS-NeRF, DINO, DINOv2, and SAM:
 <pre id="codecell0">@inproceedings{kangle2021dsnerf,
     author    = {Deng, Kangle and Liu, Andrew and Zhu, Jun-Yan and Ramanan, Deva},
     title     = {Depth-supervised {NeRF}: Fewer Views and Faster Training for Free},
