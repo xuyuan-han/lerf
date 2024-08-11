@@ -100,11 +100,16 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
         images = [self.train_dataset[i]["image"].permute(2, 0, 1)[None, ...] for i in range(len(self.train_dataset))]
         images = torch.cat(images)
 
+        if config.use_dinov2:
+            dino_model_type = "dinov2_vitb14"
+            dino_stride = 14
+        else:
+            dino_model_type = "dino_vits8"
+            dino_stride = 8
+
         cache_dir = f"outputs/{self.config.dataparser.data.name}"
         clip_cache_path = Path(osp.join(cache_dir, f"clip_{self.image_encoder.name}"))
-        dino_name = DinoDataloader.dino_type
-        dino_cache_path = Path(osp.join(cache_dir, f"dino_{dino_name}.npy"))
-        #dino_cache_path = Path(osp.join(cache_dir, "dino.npy"))
+        dino_cache_path = Path(osp.join(cache_dir, f"{dino_model_type}.npy"))
         # NOTE: cache config is sensitive to list vs. tuple, because it checks for dict equality
 
 
@@ -129,31 +134,24 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
             )
 
         if config.generate_sam_masks:
-            # SAM feature filenames
-            sam_feature_filenames = [
-                    osp.join(
-                        osp.dirname(osp.dirname(name)), "sam_features",
-                        osp.basename(name).split(".")[0] + ".npy"
-                    )
-                    for name in self.train_dataparser_outputs.image_filenames
-            ]
-
-            #print(sam_feature_filenames)
+            sam_cache_path = Path(osp.join(cache_dir, "sam.npy"))
 
             # Load SAM data
             self.sam_loader = SAMDataloader(
                 device=self.device,
-                image_paths=Path(self.config.dataparser.data /"dslr" /"resized_images" ),
-                npy_paths=sam_feature_filenames,
-                npy_directory=Path(self.config.dataparser.data /"dslr" /"sam_features"),
-                image_shape= list(images.shape[2:4]),
+                cfg={"image_shape": list(images.shape[2:4]),
+                     "sam_checkpoint": "lerf\segment_anything\sam_vit_h_4b8939.pth",
+                     "model_type": "vit_h"},
+                cache_path=sam_cache_path,
+                image_paths=self.train_dataparser_outputs.image_filenames
             )
 
         self.dino_dataloader = DinoDataloader(
             image_list=images,
-            dino_model=config.use_dinov2,
             device=self.device,
-            cfg={"image_shape": list(images.shape[2:4])},
+            cfg={"image_shape": list(images.shape[2:4]),
+                 "model_type": dino_model_type,
+                 "dino_stride": dino_stride},
             cache_path=dino_cache_path,
         )
 

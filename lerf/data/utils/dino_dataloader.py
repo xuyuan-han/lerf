@@ -8,13 +8,6 @@ import torchvision.transforms as transforms
 
 class DinoDataloader(FeatureDataloader):
 
-    # # For dinov2, use this:
-    #dino_model = "dino"
-    #dino_model_type = "dinov2_vitb14"
-    #dino_stride = 14
-    dino_type = "dinov2"
-    #dino_model_type = "dino_vits8"
-    #dino_stride = 8
     dino_load_size = 500
     dino_layer = 7
     dino_facet = "key"
@@ -25,11 +18,9 @@ class DinoDataloader(FeatureDataloader):
         cfg: dict,
         device: torch.device,
         image_list: torch.Tensor,
-        dino_model= False,
         cache_path: str = None,
     ):
         assert "image_shape" in cfg
-        self.dino_type = dino_model
         super().__init__(cfg, device, image_list, cache_path)
         # Do distillation-preprocessing as noted in N3F:
         # The features are then L2-normalized and reduced with PCA to 64 dimensions before distillation.
@@ -39,26 +30,17 @@ class DinoDataloader(FeatureDataloader):
         self.data = torch.pca_lowrank(self.data.reshape(-1, data_shape[-1]), q=64)[0].reshape((*data_shape[:-1], 64))
 
     def create(self, image_list):
-        if self.dino_type:
-            self.dino_model_type = "dinov2_vitb14"
-            self.dino_stride = 14
-            print("Using DINOv2")
+        dino_model_type = self.cfg["model_type"]
+        dino_stride = self.cfg["dino_stride"]
 
-        else:
-            self.dino_model_type = "dino_vits8"
-            self.dino_stride = 8
-            print("Using DINO")
-
-
-
-        extractor = ViTExtractor(self.dino_model_type, self.dino_stride)
+        extractor = ViTExtractor(dino_model_type, dino_stride)
         preproc_image_lst = extractor.preprocess(image_list, self.dino_load_size)[0].to(self.device)
 
         dino_embeds = []
         for image in tqdm(preproc_image_lst, desc="dino", total=len(image_list), leave=False):
             image = transforms.Resize((
-                (image.shape[1] // self.dino_stride) * self.dino_stride,
-               (image.shape[2] // self.dino_stride) * self.dino_stride,
+                (image.shape[1] // dino_stride) * dino_stride,
+               (image.shape[2] // dino_stride) * dino_stride,
              ))(image)
             with torch.no_grad():
                 descriptors = extractor.extract_descriptors(

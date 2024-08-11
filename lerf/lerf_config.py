@@ -90,7 +90,7 @@ lerf_method_big = MethodSpecification(
                 train_num_rays_per_batch=4,
                 eval_num_rays_per_batch=4,
                 generate_depth_rays = False,
-                generate_sam_masks=True
+                generate_sam_masks=False
             ),
             model=LERFModelConfig(
                 eval_num_rays_per_chunk=1 << 15,
@@ -99,7 +99,7 @@ lerf_method_big = MethodSpecification(
                 hashgrid_layers=(16, 16),
                 hashgrid_resolutions=((16, 128), (128, 512)),
                 num_lerf_samples=32,
-                sam_masks=True
+                sam_masks=False
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-L-14", clip_model_pretrained="laion2b_s32b_b82k", clip_n_dims=768
@@ -153,7 +153,7 @@ lerf_method_lite = MethodSpecification(
                 hashgrid_layers=(16,),
                 hashgrid_resolutions=((16, 512),),
                 num_lerf_samples=12,
-                sam_masks=True
+                sam_masks=False
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512
@@ -209,7 +209,7 @@ lerf_method_depth = MethodSpecification(
                 hashgrid_layers=(16,),
                 hashgrid_resolutions=((16, 512),),
                 num_lerf_samples=12,
-                sam_masks=True
+                sam_masks=False
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512

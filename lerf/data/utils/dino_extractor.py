@@ -72,7 +72,6 @@ class ViTExtractor:
         if 'dinov2' in model_type:
             model = torch.hub.load('facebookresearch/dinov2:main', model_type)
         elif 'dino' in model_type:
-            print('DINO!')
             model = torch.hub.load('facebookresearch/dino:main', model_type)
         else:  # model from timm -- load weights from timm to dino model (enables working on arbitrary size images).
             temp_model = timm.create_model(model_type, pretrained=True)
@@ -170,7 +169,6 @@ class ViTExtractor:
             transforms.Normalize(mean=self.mean, std=self.std)
         ])
         prep_img = prep(image)[None, ...]
-        print(prep_img.shape, "prep_img shape")
         return prep_img
 
     def _get_hook(self, facet: str):
