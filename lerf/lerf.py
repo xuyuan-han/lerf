@@ -43,6 +43,7 @@ class LERFModelConfig(NerfactoModelConfig):
     compute_other_losses_for_depth_rays: bool = False
     generate_depth_rays: bool = True
     learnable_depth_scale: bool = False
+    use_dinov2: bool=False
     sam_features: bool = True
 
 
@@ -61,6 +62,7 @@ class LERFModel(NerfactoModel):
             self.config.hashgrid_sizes,
             self.config.hashgrid_resolutions,
             clip_n_dims=self.image_encoder.embedding_dim,
+            use_dinov2=self.config.use_dinov2
         )
         if self.config.learnable_depth_scale:
             self.depth_scale = torch.nn.Parameter(torch.tensor(.1))

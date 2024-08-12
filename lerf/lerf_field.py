@@ -36,6 +36,7 @@ class LERFField(Field):
         grid_sizes,
         grid_resolutions,
         clip_n_dims: int,
+        use_dinov2: bool,
         spatial_distortion: SpatialDistortion = SceneContraction(),
     ):
         super().__init__()
@@ -78,11 +79,12 @@ class LERFField(Field):
                 "n_hidden_layers": 4,
             },
         )
-
+        dino_out_dims = 384
+        if use_dinov2:
+            dino_out_dims = 64
         self.dino_net = tcnn.Network(
             n_input_dims=tot_out_dims,
-            #n_output_dims=384,
-            n_output_dims=64,
+            n_output_dims= dino_out_dims,
             network_config={
                 "otype": "CutlassMLP",
                 "activation": "ReLU",
@@ -134,7 +136,6 @@ class LERFField(Field):
         return outputs
 
 
-#???????
     def get_output_from_hashgrid(self, ray_samples: RaySamples, hashgrid_field, scale):
         # designated scales, run outputs for each scale
         hashgrid_field = hashgrid_field.view(-1, self.clip_net.n_input_dims - 1)

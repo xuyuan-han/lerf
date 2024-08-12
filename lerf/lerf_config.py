@@ -221,6 +221,7 @@ lerf_method_dino = MethodSpecification(
                 hashgrid_resolutions=((16, 512),),
                 num_lerf_samples=12,
                 generate_depth_rays = False,
+                use_dinov2 = True,
                 sam_features=False
             ),
             network=OpenCLIPNetworkConfig(
