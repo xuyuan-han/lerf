@@ -25,9 +25,10 @@ class DinoDataloader(FeatureDataloader):
         # Do distillation-preprocessing as noted in N3F:
         # The features are then L2-normalized and reduced with PCA to 64 dimensions before distillation.
 
-        data_shape = self.data.shape
-        self.data = self.data / self.data.norm(dim=-1, keepdim=True)
-        self.data = torch.pca_lowrank(self.data.reshape(-1, data_shape[-1]), q=64)[0].reshape((*data_shape[:-1], 64))
+        if self.cfg["model_type"] == "dinov2_vitb14":
+            data_shape = self.data.shape
+            self.data = self.data / self.data.norm(dim=-1, keepdim=True)
+            self.data = torch.pca_lowrank(self.data.reshape(-1, data_shape[-1]), q=64)[0].reshape((*data_shape[:-1], 64))
 
     def create(self, image_list):
         dino_model_type = self.cfg["model_type"]
@@ -38,10 +39,11 @@ class DinoDataloader(FeatureDataloader):
 
         dino_embeds = []
         for image in tqdm(preproc_image_lst, desc="dino", total=len(image_list), leave=False):
-            image = transforms.Resize((
-                (image.shape[1] // dino_stride) * dino_stride,
-               (image.shape[2] // dino_stride) * dino_stride,
-             ))(image)
+            if self.cfg["model_type"] == "dinov2_vitb14":
+                image = transforms.Resize((
+                    (image.shape[1] // dino_stride) * dino_stride,
+                (image.shape[2] // dino_stride) * dino_stride,
+                ))(image)
             with torch.no_grad():
                 descriptors = extractor.extract_descriptors(
                     image.unsqueeze(0),
