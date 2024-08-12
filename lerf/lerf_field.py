@@ -81,7 +81,8 @@ class LERFField(Field):
         )
         dino_out_dims = 384
         if use_dinov2:
-            dino_out_dims = 64
+            dino_out_dims = 768
+            
         self.dino_net = tcnn.Network(
             n_input_dims=tot_out_dims,
             n_output_dims= dino_out_dims,
