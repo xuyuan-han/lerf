@@ -6,7 +6,7 @@ Our version of LeRF contains the following modifications:
 - An additional regularization based on SAM features to further improve language field quality
 
 <div align='center'>
-<img src="https://www.lerf.io/data/nerf_render.svg" height="230px">
+<img src="readme_images/lerf_pipeline_extended.jpg" height="450px">
 </div>
 
 #### TODOs
