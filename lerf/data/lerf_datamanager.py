@@ -21,16 +21,10 @@ from __future__ import annotations
 import os.path as osp
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union
-from copy import copy
+from typing import Dict, Literal, Tuple, Type, Union
 
 import torch
-import yaml
 from nerfstudio.cameras.rays import RayBundle
-from nerfstudio.data.utils.nerfstudio_collate import nerfstudio_collate
-from nerfstudio.engine.callbacks import TrainingCallback, TrainingCallbackAttributes
-from nerfstudio.model_components.ray_generators import RayGenerator
-from nerfstudio.utils.misc import IterableWrapper
 from rich.progress import Console
 
 CONSOLE = Console(width=120)
@@ -41,9 +35,6 @@ from lerf.encoders.image_encoder import BaseImageEncoder
 from nerfstudio.data.datamanagers.base_datamanager import VanillaDataManager, VanillaDataManagerConfig
 from lerf.data.utils.colmap_dataloader import ColmapDataloader
 from lerf.data.utils.sam_dataloader import SAMDataloader
-
-# For SAM
-from lerf.data.utils.feature_dataloader import FeatureDataloader
 
 @dataclass
 class LERFDataManagerConfig(VanillaDataManagerConfig):
@@ -130,7 +121,7 @@ class LERFDataManager(VanillaDataManager):  # pylint: disable=abstract-method
                 cache_path=colmap_cache_path,
             )
 
-        if config.generate_sam_features:
+        if self.test_mode != "inference" and config.generate_sam_features:
             sam_cache_path = Path(osp.join(cache_dir, "sam.npy"))
 
             # Load SAM data

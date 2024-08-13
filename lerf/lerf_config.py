@@ -6,7 +6,6 @@ from nerfstudio.cameras.camera_optimizers import CameraOptimizerConfig
 from nerfstudio.configs.base_config import ViewerConfig
 from nerfstudio.data.dataparsers.nerfstudio_dataparser import NerfstudioDataParserConfig
 from nerfstudio.data.dataparsers.colmap_dataparser import ColmapDataParserConfig
-from nerfstudio.data.dataparsers.scannetpp_dataparser import ScanNetppDataParserConfig
 from nerfstudio.engine.optimizers import AdamOptimizerConfig, RAdamOptimizerConfig
 from nerfstudio.engine.schedulers import ExponentialDecaySchedulerConfig
 from nerfstudio.engine.trainer import TrainerConfig
@@ -73,7 +72,6 @@ lerf_method_lite = MethodSpecification(
         },
         viewer=ViewerConfig(num_rays_per_chunk=1 << 15),
         vis="viewer",
-        project_name="DS-LeRF",
     ),
     description="A lightweight version of LERF designed to work on smaller GPUs",
 )    
@@ -152,8 +150,8 @@ lerf_method_sam = MethodSpecification(
         pipeline=LERFPipelineConfig(
             datamanager=LERFDataManagerConfig(
                 dataparser=ColmapDataParserConfig(train_split_fraction=0.99, max_2D_matches_per_3D_point=0,eval_mode="fraction"), #NerfstudioDataParserConfig(train_split_fraction=0.99),
-                train_num_rays_per_batch= 4096,  #4096,
-                eval_num_rays_per_batch= 4096,         #4096,
+                train_num_rays_per_batch= 4096,
+                eval_num_rays_per_batch= 4096,
                 generate_depth_rays = False,
                 generate_sam_features=True,
                 use_dinov2=False
@@ -195,7 +193,7 @@ lerf_method_sam = MethodSpecification(
         viewer=ViewerConfig(num_rays_per_chunk=1 << 15),
         vis="viewer",
     ),
-    description="A lightweight version of LERF designed to work on smaller GPUs by using SAM masks",
+    description="A lightweight version of LERF designed to work on smaller GPUs using SAM masks",
 )
 
 lerf_method_dino = MethodSpecification(
@@ -208,10 +206,10 @@ lerf_method_dino = MethodSpecification(
         pipeline=LERFPipelineConfig(
             datamanager=LERFDataManagerConfig(
                 dataparser=ColmapDataParserConfig(train_split_fraction=0.99, max_2D_matches_per_3D_point=0, eval_mode="fraction"), #NerfstudioDataParserConfig(train_split_fraction=0.99),
-                train_num_rays_per_batch= 4096,  #4096,
-                eval_num_rays_per_batch= 4096,         #4096,
+                train_num_rays_per_batch= 4096,
+                eval_num_rays_per_batch= 4096,
                 generate_depth_rays = False,
-                generate_sam_features=False,
+                generate_sam_features= False,
                 use_dinov2= True
             ),
             model=LERFModelConfig(
@@ -222,7 +220,7 @@ lerf_method_dino = MethodSpecification(
                 num_lerf_samples=12,
                 generate_depth_rays = False,
                 use_dinov2 = True,
-                sam_features=False
+                sam_features= False
             ),
             network=OpenCLIPNetworkConfig(
                 clip_model_type="ViT-B-16", clip_model_pretrained="laion2b_s34b_b88k", clip_n_dims=512
@@ -251,5 +249,5 @@ lerf_method_dino = MethodSpecification(
         viewer=ViewerConfig(num_rays_per_chunk=1 << 15),
         vis="viewer",
     ),
-    description="A lightweight version of LERF designed to work on smaller GPUs by leveraging DINOv2",
+    description="A lightweight version of LERF designed to work on smaller GPUs leveraging DINOv2",
 )

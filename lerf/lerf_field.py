@@ -53,7 +53,6 @@ class LERFField(Field):
         tot_out_dims = sum([e.n_output_dims for e in self.clip_encs])
 
 
-
         #SAM NET INITIALIZATION
         self.sam_net = tcnn.Network(
             n_input_dims=tot_out_dims,
@@ -130,9 +129,10 @@ class LERFField(Field):
         dino_pass = self.dino_net(x).view(*ray_samples.frustums.shape, -1)
         outputs[LERFFieldHeadNames.DINO] = dino_pass
 
-        #SAM PASS
-        sam_pass = self.sam_net(x).view(*ray_samples.frustums.shape, -1)
-        outputs[LERFFieldHeadNames.SAM] = sam_pass
+        if self.training:
+            #SAM PASS
+            sam_pass = self.sam_net(x).view(*ray_samples.frustums.shape, -1)
+            outputs[LERFFieldHeadNames.SAM] = sam_pass
 
         return outputs
 

@@ -1,13 +1,7 @@
-import os
-import typing
-from pathlib import Path
-import numpy as np
 import torch
-#from einops import rearrange
 import cv2
 import math
 from lerf.segment_anything import sam_model_registry, SamPredictor
-import glob
 from lerf.data.utils.feature_dataloader import FeatureDataloader
 from tqdm import tqdm
 
@@ -16,21 +10,9 @@ class SAMDataloader(FeatureDataloader):
         self,
         cfg: dict,
         device: torch.device,
-        #image_list: torch.Tensor,
         cache_path: str=None,
         image_paths: list=None,
     ):
-        """
-        img_list = []
-        for img_path in glob.glob(os.path.join(self.image_paths, "*")):
-            if img_path.endswith(".png") or img_path.endswith(".jpg") or img_path.endswith(".JPG"):
-                img_list.append(img_path)
-
-        self.image_paths = img_list
-        self.predictor = self.init_sam()
-
-        self.features = self.load_or_extract_features()
-        """
         assert "image_shape" in cfg
         self.predictor = self.init_sam(device=device,cfg=cfg)
         super().__init__(cfg, device, image_paths, cache_path)

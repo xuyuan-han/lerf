@@ -22,10 +22,6 @@ from lerf.encoders.image_encoder import BaseImageEncoder
 from lerf.lerf_field import LERFField
 from lerf.lerf_fieldheadnames import LERFFieldHeadNames
 from lerf.lerf_renderers import CLIPRenderer, MeanRenderer
-from lerf.segment_anything import sam_model_registry, SamPredictor
-from lerf.sam_utils import generate_masked_img, get_feature_size
-import torch.nn as nn
-import time
 
 
 
@@ -141,7 +137,7 @@ class LERFModel(NerfactoModel):
         outputs["dino"] = self.renderer_mean(
             embeds=lerf_field_outputs[LERFFieldHeadNames.DINO], weights=lerf_weights.detach()
         )
-        if self.config.sam_features:
+        if self.training and self.config.sam_features:
           outputs["sam"] = self.renderer_mean(embeds=lerf_field_outputs[LERFFieldHeadNames.SAM],
                                           weights=lerf_weights.detach())
 

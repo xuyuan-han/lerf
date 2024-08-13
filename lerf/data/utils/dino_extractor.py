@@ -2,14 +2,12 @@
 
 import argparse
 import torch
-import torchvision.transforms
 from torch import nn
 from torchvision import transforms
 import torch.nn.modules.utils as nn_utils
 import math
 import timm
 import types
-from pathlib import Path
 from typing import Union, List, Tuple
 from PIL import Image
 

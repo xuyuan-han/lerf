@@ -1,5 +1,3 @@
-import typing
-
 import torch
 from lerf.data.utils.dino_extractor import ViTExtractor
 from lerf.data.utils.feature_dataloader import FeatureDataloader
